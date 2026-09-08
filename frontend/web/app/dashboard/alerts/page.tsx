@@ -31,10 +31,10 @@ export default function AlertsPage() {
         <div>
           <h1 className="text-2xl font-extrabold text-slate-950 flex items-center gap-2">
             <Bell className="w-6 h-6 text-red-500" />
-            <span>Disaster Warning & Alert Dispatch Center</span>
+            <span>Warning Drafts & Simulation Center</span>
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Review active emergency warnings, acknowledge alerts, and trigger evacuation notices
+            Review simulation-only warnings. No public channel is connected or dispatched from this application.
           </p>
         </div>
       </div>

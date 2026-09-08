@@ -1,26 +1,45 @@
-"""NER-SENTRY FastAPI Backend - Main Application Entry Point."""
-from fastapi import FastAPI, HTTPException, status
-from fastapi.middleware.cors import CORSMiddleware
+"""BhuRakshak FastAPI backend application."""
+import logging
 from contextlib import asynccontextmanager
-from datetime import datetime
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from backend.api.config import settings
-from backend.api.schemas.errors import ErrorResponse, ErrorDetail
-from backend.api.schemas.risk import DashboardSummary
+from backend.api.database import close_database, initialize_database
 
 # Import routers
-from backend.api.routers import dashboard, zones, risk, simulation, alerts, reports, infrastructure, health
+from backend.api.routers import (
+    alerts,
+    app_data,
+    dashboard,
+    health,
+    infrastructure,
+    reports,
+    risk,
+    simulation,
+    sources,
+    zones,
+)
 
 
 # Lifespan context manager
+logger = logging.getLogger(__name__)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Application startup and shutdown events."""
-    # Startup
-    print("🚀 NER-SENTRY Backend Starting...")
+    """Initialize persistence and release pooled resources cleanly."""
+    try:
+        await initialize_database()
+        logger.info("BhuRakshak backend started")
+    except Exception:
+        logger.exception("Database initialization failed")
+        if settings.database_required:
+            raise
     yield
-    # Shutdown
-    print("🛑 NER-SENTRY Backend Shutting Down...")
+    await close_database()
+    logger.info("BhuRakshak backend stopped")
 
 
 # Initialize FastAPI app
@@ -53,6 +72,8 @@ app.include_router(simulation.router, prefix=settings.api_prefix, tags=["Simulat
 app.include_router(alerts.router, prefix=settings.api_prefix, tags=["Alerts"])
 app.include_router(reports.router, prefix=settings.api_prefix, tags=["Reports"])
 app.include_router(infrastructure.router, prefix=settings.api_prefix, tags=["Infrastructure"])
+app.include_router(sources.router, prefix=settings.api_prefix, tags=["Data Sources"])
+app.include_router(app_data.router, prefix=settings.api_prefix, tags=["Application Data"])
 
 
 @app.get("/")

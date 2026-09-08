@@ -9,7 +9,7 @@ from backend.api.config import settings
 from backend.api.schemas.auth import TokenPayload, CurrentUser, UserRole
 from backend.api.schemas.errors import ErrorCode
 
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
 
 def decode_token(token: str) -> Optional[TokenPayload]:
@@ -29,9 +29,20 @@ def decode_token(token: str) -> Optional[TokenPayload]:
 
 
 async def get_current_user(
-    credentials: HTTPAuthCredentials = Depends(security),
+    credentials: Optional[HTTPAuthCredentials] = Depends(security),
 ) -> CurrentUser:
-    """Dependency to get and validate current user from JWT token."""
+    """Validate JWT, or expose a read-only demo identity when explicitly enabled."""
+    if credentials is None:
+        if settings.demo_mode and settings.anonymous_demo_access:
+            return CurrentUser(
+                user_id="anonymous-demo",
+                email="demo@localhost.invalid",
+                role=UserRole.CITIZEN,
+            )
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={"error": {"code": ErrorCode.UNAUTHORIZED, "message": "Authentication required"}},
+        )
     token = credentials.credentials
     token_payload = decode_token(token)
 

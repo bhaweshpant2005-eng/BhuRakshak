@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, MapPin, SlidersHorizontal, Bell, BarChart2, Globe } from 'lucide-react';
+import { LayoutDashboard, MapPin, SlidersHorizontal, Bell, BarChart2, Database, Globe } from 'lucide-react';
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
@@ -11,7 +11,8 @@ export default function DashboardSidebar() {
     { href: '/dashboard', label: 'Control Overview', icon: LayoutDashboard },
     { href: '/dashboard/zones', label: 'Risk Zones & Map', icon: MapPin },
     { href: '/dashboard/simulator', label: 'What-If Simulator', icon: SlidersHorizontal, highlight: true },
-    { href: '/dashboard/alerts', label: 'Alert Dispatch', icon: Bell },
+    { href: '/dashboard/alerts', label: 'Alert Simulations', icon: Bell },
+    { href: '/dashboard/sources', label: 'Data Sources', icon: Database },
     { href: '/dashboard/analytics', label: 'Historical Analytics', icon: BarChart2 },
   ];
 
@@ -69,8 +70,8 @@ export default function DashboardSidebar() {
       <div className="p-4 border-t border-slate-200">
         <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-1.5 text-xs">
           <div className="flex items-center justify-between">
-            <span className="text-slate-500">AI Model Status:</span>
-            <span className="text-sky-700 font-mono font-bold">ONLINE</span>
+            <span className="text-slate-500">Risk Engine:</span>
+            <span className="text-sky-700 font-mono font-bold">EXPLAINABLE</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-slate-500">GIS Engine:</span>

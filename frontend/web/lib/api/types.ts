@@ -31,6 +31,7 @@ export interface DataSourceStatus {
   last_error?: string | null;
   freshness_seconds?: number | null;
   metadata: Record<string, unknown>;
+<<<<<<< HEAD
   credential_configured: boolean;
   file_import_available: boolean;
   provider_adapter_status: string;
@@ -81,6 +82,8 @@ export interface SourceImportResult {
   records_written: number;
   checksum?: string | null;
   quality_flags: string[];
+=======
+>>>>>>> 9e69ff4 (finished the frontend source status view and  simulation labels)
 }
 
 export interface RiskZone {
@@ -119,6 +122,7 @@ export interface DashboardSummary {
   blocked_roads_count: number;
   last_updated: string;
   provenance?: Provenance;
+<<<<<<< HEAD
 }
 
 export interface PlaceRiskResult {
@@ -136,6 +140,8 @@ export interface PlaceRiskResult {
   weather_refresh?: SourceImportResult | null;
   provenance: Provenance;
   disclaimer: string;
+=======
+>>>>>>> 9e69ff4 (finished the frontend source status view and  simulation labels)
 }
 
 export interface SimulationRequest {
@@ -220,4 +226,8 @@ export interface CitizenReport {
   verified: boolean;
   status?: 'pending' | 'verified' | 'rejected';
   provenance?: Provenance;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 9e69ff4 (finished the frontend source status view and  simulation labels)

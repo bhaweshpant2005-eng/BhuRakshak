@@ -83,7 +83,7 @@ export default function ZoneDetailsPage() {
         </div>
 
         <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center font-mono space-y-1 min-w-[200px]">
-          <span className="text-xs text-slate-500 uppercase">AI Risk Score</span>
+          <span className="text-xs text-slate-500 uppercase">Explainable Risk Score</span>
           <div className="text-4xl font-extrabold text-red-400">{zone.risk_score} <span className="text-sm font-normal text-slate-500">/100</span></div>
           <span className="text-[11px] text-emerald-400">Confidence: {zone.confidence}%</span>
         </div>

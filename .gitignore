@@ -52,3 +52,12 @@ logs/
 # Temp files
 *.tmp
 *.bak
+
+# Local runtime data and generated output
+.data/
+.next/
+node_modules/
+tsconfig.tsbuildinfo
+
+# Object storage
+.object-storage/

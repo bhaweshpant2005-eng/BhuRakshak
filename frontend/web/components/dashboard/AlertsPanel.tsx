@@ -22,7 +22,7 @@ export default function AlertsPanel({ initialAlerts }: { initialAlerts: Alert[] 
       <div className="p-4 border-b border-slate-100 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Bell className="w-4 h-4 text-sky-700" />
-          <h2 className="font-bold text-slate-950 text-base">Active Disaster Warnings</h2>
+          <h2 className="font-bold text-slate-950 text-base">Alert Drafts & Simulations</h2>
         </div>
         <span className="text-xs font-mono bg-red-50 text-red-700 px-2 py-0.5 rounded border border-red-200 tabular-nums">
           {alerts.filter((a) => !a.acknowledged).length} Unacknowledged
@@ -64,7 +64,7 @@ export default function AlertsPanel({ initialAlerts }: { initialAlerts: Alert[] 
                 {alert.evacuation_recommended ? (
                   <span className="inline-flex items-center gap-1 text-[11px] font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/30">
                     <AlertOctagon className="w-3.5 h-3.5" />
-                    <span>EVACUATION RECOMMENDED</span>
+                    <span>{alert.status === 'approved_simulation' ? 'SIMULATION: EVACUATION RECOMMENDED' : 'EVACUATION DRAFT'}</span>
                   </span>
                 ) : (
                   <span className="text-[11px] text-slate-500">High Monitoring</span>

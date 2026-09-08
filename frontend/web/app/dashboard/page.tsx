@@ -20,6 +20,7 @@ import {
 import SummaryCards from '@/components/dashboard/SummaryCards';
 import PriorityZonesList from '@/components/dashboard/PriorityZonesList';
 import AlertsPanel from '@/components/dashboard/AlertsPanel';
+import EmergencyResponsePanel from '@/components/dashboard/EmergencyResponsePanel';
 import MapContainer from '@/components/gis/MapContainer';
 import Link from 'next/link';
 import { SlidersHorizontal, ArrowRight, ShieldAlert, Activity, FileText } from 'lucide-react';
@@ -81,7 +82,7 @@ export default function DashboardOverviewPage() {
             <span>Disaster Operations Control Center</span>
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Real-time geospatial landslide risk analytics and decision support for North East India
+            Provenance-aware landslide risk decision support for North East India
           </p>
         </div>
 
@@ -97,6 +98,8 @@ export default function DashboardOverviewPage() {
 
       {/* Metric Summary Cards */}
       {summary && <SummaryCards summary={summary} />}
+
+      <EmergencyResponsePanel alerts={alerts} selectedZone={selectedZone} />
 
       {/* Main Grid: GIS Map + Priority Queue */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -198,7 +201,7 @@ export default function DashboardOverviewPage() {
                 <p className="text-slate-700 text-pretty">{rep.location_description}</p>
                 <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono pt-1">
                   <span>Urgency: <strong className="text-red-600">{rep.urgency}</strong></span>
-                  <span className="text-sky-700">✓ Ground Verified</span>
+                  <span>{rep.status === 'verified' || rep.verified ? '✓ Human Verified' : 'Pending Human Review'}</span>
                 </div>
               </div>
             ))}
