@@ -43,6 +43,7 @@ class Settings(BaseSettings):
     # Public/open source adapters
     open_meteo_base_url: str = "https://api.open-meteo.com/v1"
     open_meteo_enabled: bool = True
+    geocoding_base_url: str = "https://nominatim.openstreetmap.org"
     cdse_stac_url: str = "https://catalogue.dataspace.copernicus.eu/stac"
     cdse_token_url: str = "https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token"
     cdse_process_url: str = "https://sh.dataspace.copernicus.eu/api/v1/process"

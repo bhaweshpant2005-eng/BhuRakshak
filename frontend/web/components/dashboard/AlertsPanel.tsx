@@ -7,13 +7,20 @@ import { formatDate } from '@/lib/utils/formatters';
 import { getRiskBadgeClasses } from '@/lib/utils/riskUtils';
 import { Bell, CheckCircle2, AlertOctagon, ShieldAlert } from 'lucide-react';
 
-export default function AlertsPanel({ initialAlerts }: { initialAlerts: Alert[] }) {
+export default function AlertsPanel({
+  initialAlerts,
+  onAcknowledgeAlert,
+}: {
+  initialAlerts: Alert[];
+  onAcknowledgeAlert?: (id: string) => void;
+}) {
   const [alerts, setAlerts] = useState<Alert[]>(initialAlerts);
 
   const handleAcknowledge = async (id: string) => {
     const updated = await acknowledgeAlert(id);
     if (updated) {
       setAlerts((prev) => prev.map((a) => (a.id === id ? { ...a, acknowledged: true } : a)));
+      onAcknowledgeAlert?.(id);
     }
   };
 

@@ -13,12 +13,14 @@ from backend.api.database.models import (
     DataSource,
     FieldReport,
     InfrastructureAsset,
+    LandslideEvent,
     ReportReview,
     RiskContribution,
     RiskPrediction,
     RiskZone,
     SatelliteEvidence,
     SatelliteScene,
+    Settlement,
     ZoneFeature,
 )
 from backend.api.integrations.catalogue import source_catalogue
@@ -239,7 +241,10 @@ async def seed_demo_data(session: AsyncSession) -> None:
 
     if await session.scalar(select(InfrastructureAsset.id).limit(1)) is None:
         for zone in zone_rows:
+            zone_lat = zone.metadata_json["lat"]
+            zone_lng = zone.metadata_json["lng"]
             for index, road in enumerate(zone.metadata_json["affected_roads"]):
+                offset = (index + 1) * 0.012
                 session.add(InfrastructureAsset(
                     source_id=source_rows["openstreetmap"].id,
                     external_id=f"prepared-road-{zone.zone_id}-{index}",
@@ -250,8 +255,70 @@ async def seed_demo_data(session: AsyncSession) -> None:
                     operational_status="warning" if zone.risk_level in {"HIGH", "CRITICAL"} else "open",
                     criticality=0.8 if index == 0 else 0.55,
                     provenance=Provenance.PREPARED_DEMO,
-                    metadata_json={"classification": "prepared_demo"},
+                    metadata_json={
+                        "classification": "prepared_demo",
+                        "highway_code": road.split()[0],
+                        "start_point": zone.name,
+                        "end_point": zone.district,
+                        "coordinates": [
+                            [zone_lat - offset, zone_lng - offset],
+                            [zone_lat + offset, zone_lng + offset],
+                        ],
+                    },
                 ))
+
+    if await session.scalar(select(Settlement.id).limit(1)) is None:
+        for zone in zone_rows:
+            villages = zone.metadata_json["affected_villages"]
+            for index, name in enumerate(villages):
+                offset = (index - (len(villages) - 1) / 2) * 0.009
+                session.add(Settlement(
+                    source_id=source_rows["openstreetmap"].id,
+                    external_id=f"prepared-settlement-{zone.zone_id}-{index}",
+                    zone_id=zone.id,
+                    name=name,
+                    population=max(250, round((zone.population or 0) / max(len(villages), 1))),
+                    location=None,
+                    provenance=Provenance.PREPARED_DEMO,
+                    metadata_json={
+                        "classification": "prepared_demo",
+                        "latitude": zone.metadata_json["lat"] + offset,
+                        "longitude": zone.metadata_json["lng"] + offset,
+                    },
+                ))
+
+    if await session.scalar(select(LandslideEvent.id).limit(1)) is None:
+        event_source = source_rows["nasa-coolr"]
+        prepared_events = [
+            (zone_rows[0], "2024-06-10T03:30:00+00:00", "Rangpo corridor debris slide", 0, 176.0, "rainfall"),
+            (zone_rows[1], "2022-06-17T09:00:00+00:00", "Sohra road-cut landslide", 1, 248.0, "rainfall"),
+            (zone_rows[2], "2024-05-28T01:00:00+00:00", "Aizawl slope failure", 17, 198.0, "rainfall"),
+            (zone_rows[3], "2023-07-09T08:00:00+00:00", "Itanagar roadside slide", 0, 121.0, "rainfall"),
+        ]
+        for index, (zone, occurred_at, location_name, fatalities, rainfall, trigger) in enumerate(prepared_events):
+            session.add(LandslideEvent(
+                source_id=event_source.id,
+                external_id=f"prepared-coolr-ner-{index + 1}",
+                zone_id=zone.id,
+                occurred_at=datetime.fromisoformat(occurred_at),
+                location=None,
+                event_type="landslide",
+                fatalities=fatalities,
+                certainty="prepared_reference",
+                provenance=Provenance.PREPARED_DEMO,
+                metadata_json={
+                    "classification": "prepared_demo",
+                    "location_name": location_name,
+                    "state": zone.state,
+                    "district": zone.district,
+                    "latitude": zone.metadata_json["lat"] + 0.014,
+                    "longitude": zone.metadata_json["lng"] - 0.011,
+                    "risk_score_at_event": zone.risk_score,
+                    "rainfall_recorded_mm": rainfall,
+                    "slope_deg": zone.metadata_json["slope_deg"],
+                    "damage_summary": f"Prepared historical context; reported trigger: {trigger}.",
+                },
+            ))
 
     if await session.scalar(select(FieldReport.id).limit(1)) is None:
         pending = FieldReport(

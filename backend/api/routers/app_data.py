@@ -61,6 +61,21 @@ async def zone(zone_id: str):
     return result
 
 
+@router.get("/app/settlements")
+async def settlements(zone_id: str | None = None):
+    return await get_database_service().list_settlements(zone_id)
+
+
+@router.get("/app/roads")
+async def roads(zone_id: str | None = None):
+    return await get_database_service().list_roads(zone_id)
+
+
+@router.get("/app/landslide-events")
+async def landslide_events(zone_id: str | None = None):
+    return await get_database_service().list_landslide_events(zone_id)
+
+
 @router.get("/app/reports")
 async def reports(zone_id: str | None = None):
     return await get_database_service().list_field_reports(zone_id)

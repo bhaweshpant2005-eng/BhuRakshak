@@ -85,7 +85,8 @@ export default function RiskMap({
             <strong style="color: #0369a1;">${road.name} (${road.highway_code})</strong><br/>
             Status: <span style="color: #dc2626; font-weight: bold;">${road.status}</span><br/>
             Risk Score: ${road.risk_score} / 100<br/>
-            Route: ${road.start_point} &rarr; ${road.end_point}
+            Route: ${road.start_point} &rarr; ${road.end_point}<br/>
+            Evidence: ${(road.provenance ?? 'unavailable').replaceAll('_', ' ')}
           </div>
         `);
       }
@@ -93,7 +94,7 @@ export default function RiskMap({
 
     // Render Villages
     villages.forEach((village) => {
-      if (village.coordinates) {
+      if (village.coordinates.lat !== null && village.coordinates.lng !== null) {
         const marker = L.circleMarker([village.coordinates.lat, village.coordinates.lng], {
           radius: 3,
           color: '#38bdf8',
@@ -106,7 +107,8 @@ export default function RiskMap({
             <strong style="color: #0369a1;">Village: ${village.name}</strong><br/>
             District: ${village.district}, ${village.state}<br/>
             Population: <strong>${village.population.toLocaleString()}</strong><br/>
-            Risk Score: ${village.risk_score} (${village.risk_level})
+            Risk Score: ${village.risk_score} (${village.risk_level})<br/>
+            Evidence: ${(village.provenance ?? 'unavailable').replaceAll('_', ' ')}
           </div>
         `);
       }

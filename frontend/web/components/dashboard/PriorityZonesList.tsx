@@ -14,7 +14,6 @@ export default function PriorityZonesList({
   onSelectZone?: (zone: RiskZone) => void;
   selectedZoneId?: string;
 }) {
-  // Sort by risk score descending
   const sortedZones = [...zones].sort((a, b) => b.risk_score - a.risk_score);
 
   return (
@@ -39,9 +38,8 @@ export default function PriorityZonesList({
             <div
               key={zone.zone_id}
               onClick={() => onSelectZone && onSelectZone(zone)}
-              className={`p-4 transition duration-200 cursor-pointer hover:bg-sky-50 ${
-                isSelected ? 'bg-sky-50 border-l-4 border-sky-600' : ''
-              }`}
+              className={`p-4 transition duration-200 cursor-pointer hover:bg-sky-50 ${isSelected ? 'bg-sky-50 border-l-4 border-sky-600' : ''
+                }`}
             >
               <div className="flex items-start justify-between gap-2">
                 <div>
@@ -78,7 +76,6 @@ export default function PriorityZonesList({
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex items-center justify-between mt-3 text-xs">
                 <span className="text-[10px] text-slate-500">
                   {zone.affected_villages.length} Villages Affected

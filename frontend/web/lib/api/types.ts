@@ -31,7 +31,6 @@ export interface DataSourceStatus {
   last_error?: string | null;
   freshness_seconds?: number | null;
   metadata: Record<string, unknown>;
-<<<<<<< HEAD
   credential_configured: boolean;
   file_import_available: boolean;
   provider_adapter_status: string;
@@ -82,8 +81,6 @@ export interface SourceImportResult {
   records_written: number;
   checksum?: string | null;
   quality_flags: string[];
-=======
->>>>>>> 9e69ff4 (finished the frontend source status view and  simulation labels)
 }
 
 export interface RiskZone {
@@ -91,13 +88,13 @@ export interface RiskZone {
   name: string;
   state: string;
   district: string;
-  risk_score: number; // 0 - 100
+  risk_score: number;
   risk_level: RiskLevel;
-  confidence: number; // 0 - 100%
-  rainfall_mm: number; // 24h accumulated rainfall
-  soil_moisture: number; // %
-  slope_deg: number; // degrees
-  elevation_m: number; // meters
+  confidence: number;
+  rainfall_mm: number;
+  soil_moisture: number;
+  slope_deg: number;
+  elevation_m: number;
   historical_events: number;
   affected_villages: string[];
   affected_roads: string[];
@@ -105,7 +102,7 @@ export interface RiskZone {
   geometry: {
     lat: number;
     lng: number;
-    coordinates?: [number, number][]; // optional polygon bounds
+    coordinates?: [number, number][];
   };
   last_updated: string;
   provenance?: Provenance;
@@ -122,7 +119,19 @@ export interface DashboardSummary {
   blocked_roads_count: number;
   last_updated: string;
   provenance?: Provenance;
-<<<<<<< HEAD
+}
+
+export interface PlaceRiskHistoricalContext {
+  status: 'events_found' | 'none_in_current_catalogue';
+  search_radius_km: number;
+  total_nearby: number;
+  nearest_event: NearbyHistoricalLandslide | null;
+  events: NearbyHistoricalLandslide[];
+  disclaimer: string;
+}
+
+export interface NearbyHistoricalLandslide extends HistoricalLandslide {
+  distance_km: number;
 }
 
 export interface PlaceRiskResult {
@@ -138,16 +147,16 @@ export interface PlaceRiskResult {
   reasons: string[];
   missing_features: string[];
   weather_refresh?: SourceImportResult | null;
+  weather_refresh_error?: string | null;
+  historical_landslides: PlaceRiskHistoricalContext;
   provenance: Provenance;
   disclaimer: string;
-=======
->>>>>>> 9e69ff4 (finished the frontend source status view and  simulation labels)
 }
 
 export interface SimulationRequest {
   zone_id?: string;
-  rainfall_change_percent: number; // -50 to +200
-  duration_hours: number; // 1 to 72
+  rainfall_change_percent: number;
+  duration_hours: number;
 }
 
 export interface SimulationResponse {
@@ -186,9 +195,10 @@ export interface Village {
   risk_level: RiskLevel;
   nearest_zone_id: string;
   coordinates: {
-    lat: number;
-    lng: number;
+    lat: number | null;
+    lng: number | null;
   };
+  provenance?: Provenance;
 }
 
 export interface RoadSegment {
@@ -200,19 +210,29 @@ export interface RoadSegment {
   status: 'OPEN' | 'WARNING' | 'HIGH_RISK' | 'BLOCKED';
   risk_score: number;
   coordinates: [number, number][];
+  zone_id?: string | null;
+  provenance?: Provenance;
 }
 
 export interface HistoricalLandslide {
   id: string;
-  date: string;
+  date: string | null;
   location: string;
   state: string;
   district: string;
-  risk_score_at_event: number;
-  rainfall_recorded_mm: number;
-  slope_deg: number;
+  risk_score_at_event: number | null;
+  rainfall_recorded_mm: number | null;
+  slope_deg: number | null;
   casualties: number;
   damage_summary: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  distance_km?: number;
+  event_type?: string | null;
+  certainty?: string | null;
+  source_name?: string | null;
+  provenance?: Provenance;
+  zone_id?: string | null;
 }
 
 export interface CitizenReport {
@@ -226,8 +246,4 @@ export interface CitizenReport {
   verified: boolean;
   status?: 'pending' | 'verified' | 'rejected';
   provenance?: Provenance;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 9e69ff4 (finished the frontend source status view and  simulation labels)

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   DashboardSummary,
   RiskZone,
@@ -17,13 +17,13 @@ import {
   getRoads,
   getCitizenReports,
 } from '@/lib/api/services';
-import SummaryCards from '@/components/dashboard/SummaryCards';
+import SummaryCards, { SummaryFilter } from '@/components/dashboard/SummaryCards';
 import PriorityZonesList from '@/components/dashboard/PriorityZonesList';
 import AlertsPanel from '@/components/dashboard/AlertsPanel';
 import EmergencyResponsePanel from '@/components/dashboard/EmergencyResponsePanel';
 import MapContainer from '@/components/gis/MapContainer';
 import Link from 'next/link';
-import { SlidersHorizontal, ArrowRight, ShieldAlert, Activity, FileText } from 'lucide-react';
+import { SlidersHorizontal, ArrowRight, ShieldAlert, Activity, FileText, Search, Filter, X } from 'lucide-react';
 
 export default function DashboardOverviewPage() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -33,6 +33,7 @@ export default function DashboardOverviewPage() {
   const [roads, setRoads] = useState<RoadSegment[]>([]);
   const [reports, setReports] = useState<CitizenReport[]>([]);
   const [selectedZone, setSelectedZone] = useState<RiskZone | null>(null);
+  const [summaryFilter, setSummaryFilter] = useState<SummaryFilter>('ALL');
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -63,6 +64,60 @@ export default function DashboardOverviewPage() {
     loadData();
   }, []);
 
+  // Compute live real-time metrics so summary cards respond immediately to live changes
+  const liveSummary = useMemo(() => {
+    if (!summary && zones.length === 0) return null;
+    const critical = zones.filter((z) => z.risk_level === 'CRITICAL').length;
+    const high = zones.filter((z) => z.risk_level === 'HIGH').length;
+    const unackAlerts = alerts.filter((a) => !a.acknowledged).length;
+    const monitoredVillages = zones.reduce(
+      (acc, z) => acc + (z.affected_villages?.length || 0),
+      0,
+    );
+    const blockedRoads = roads.filter((r) => r.status === 'BLOCKED').length;
+
+    return {
+      total_zones: zones.length || summary?.total_zones || 0,
+      critical_zones: critical || summary?.critical_zones || 0,
+      high_zones: high || summary?.high_zones || 0,
+      moderate_zones: zones.filter((z) => z.risk_level === 'MODERATE').length || summary?.moderate_zones || 0,
+      low_zones: zones.filter((z) => z.risk_level === 'LOW').length || summary?.low_zones || 0,
+      active_alerts: unackAlerts,
+      high_risk_villages: monitoredVillages || summary?.high_risk_villages || 0,
+      blocked_roads_count: blockedRoads || summary?.blocked_roads_count || 0,
+      last_updated: summary?.last_updated || new Date().toISOString(),
+      provenance: summary?.provenance || 'derived',
+    };
+  }, [summary, zones, alerts, roads]);
+
+  // Dynamically filtered zones based on clicked SummaryCard
+  const filteredZones = useMemo(() => {
+    switch (summaryFilter) {
+      case 'CRITICAL':
+        return zones.filter((z) => z.risk_level === 'CRITICAL');
+      case 'HIGH':
+        return zones.filter((z) => z.risk_level === 'HIGH');
+      case 'VILLAGES':
+        return zones.filter((z) => (z.affected_villages?.length || 0) > 0);
+      case 'ROADS':
+        return zones.filter((z) => (z.affected_roads?.length || 0) > 0);
+      default:
+        return zones;
+    }
+  }, [zones, summaryFilter]);
+
+  const handleFilterChange = (filter: SummaryFilter) => {
+    setSummaryFilter(filter);
+    if (filter === 'ALERTS') {
+      const el = document.getElementById('alerts-feed-section');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleAlertAcknowledged = (id: string) => {
+    setAlerts((prev) => prev.map((a) => (a.id === id ? { ...a, acknowledged: true } : a)));
+  };
+
   if (loading) {
     return (
       <div className="h-96 flex flex-col items-center justify-center space-y-3 text-slate-500">
@@ -86,18 +141,50 @@ export default function DashboardOverviewPage() {
           </p>
         </div>
 
-        <Link
-          href="/dashboard/simulator"
-          className="button-primary px-5"
-        >
-          <SlidersHorizontal className="w-4 h-4" />
-          <span>Launch Scenario Simulator</span>
-          <ArrowRight className="w-4 h-4" />
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/dashboard/place-risk" className="button-secondary px-5">
+            <Search className="w-4 h-4" />
+            <span>Check a Place</span>
+          </Link>
+          <Link
+            href="/dashboard/simulator"
+            className="button-primary px-5"
+          >
+            <SlidersHorizontal className="w-4 h-4" />
+            <span>Launch Scenario Simulator</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
 
       {/* Metric Summary Cards */}
-      {summary && <SummaryCards summary={summary} />}
+      {(liveSummary || summary) && (
+        <SummaryCards
+          summary={liveSummary ?? (summary as DashboardSummary)}
+          activeFilter={summaryFilter}
+          onFilterChange={handleFilterChange}
+        />
+      )}
+
+      {/* Interactive Filter Reset Bar */}
+      {summaryFilter !== 'ALL' && (
+        <div className="flex items-center justify-between p-3 rounded-lg bg-sky-50 border border-sky-200 text-xs text-sky-900 animate-in fade-in">
+          <div className="flex items-center gap-2 font-medium">
+            <Filter className="size-3.5 text-sky-700" />
+            <span>
+              Filtering display by <strong>{summaryFilter}</strong> ({filteredZones.length} of {zones.length} sectors shown)
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setSummaryFilter('ALL')}
+            className="flex items-center gap-1 font-bold text-sky-700 hover:text-sky-950 underline cursor-pointer"
+          >
+            <X className="size-3" />
+            Show all sectors
+          </button>
+        </div>
+      )}
 
       <EmergencyResponsePanel alerts={alerts} selectedZone={selectedZone} />
 
@@ -119,7 +206,7 @@ export default function DashboardOverviewPage() {
           </div>
 
           <MapContainer
-            zones={zones}
+            zones={filteredZones}
             villages={villages}
             roads={roads}
             selectedZoneId={selectedZone?.zone_id}
@@ -164,7 +251,7 @@ export default function DashboardOverviewPage() {
         {/* Priority Zones Sidebar (1 col) */}
         <div className="h-full">
           <PriorityZonesList
-            zones={zones}
+            zones={filteredZones}
             selectedZoneId={selectedZone?.zone_id}
             onSelectZone={(z) => setSelectedZone(z)}
           />
@@ -172,8 +259,8 @@ export default function DashboardOverviewPage() {
       </div>
 
       {/* Lower Section: Alerts Feed + Citizen & Field Reports */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <AlertsPanel initialAlerts={alerts} />
+      <div id="alerts-feed-section" className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <AlertsPanel initialAlerts={alerts} onAcknowledgeAlert={handleAlertAcknowledged} />
 
         {/* Ground Field & Citizen Reports */}
         <div className="surface-card p-4 flex flex-col space-y-4">

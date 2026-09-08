@@ -83,6 +83,7 @@ class FileImportAdapter(SourceAdapter):
             ".nc": "application/x-netcdf",
             ".h5": "application/x-hdf5",
             ".hdf": "application/x-hdf",
+            ".zip": "application/zip",
         }.get(suffix, "application/octet-stream")
         return IngestionBatch(
             source_slug=self.descriptor.slug,

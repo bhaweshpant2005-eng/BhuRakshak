@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, MapPin, SlidersHorizontal, Bell, BarChart2, Database, Globe } from 'lucide-react';
+import { LayoutDashboard, MapPin, Search, SlidersHorizontal, Bell, BarChart2, Database, Globe } from 'lucide-react';
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
@@ -10,6 +10,7 @@ export default function DashboardSidebar() {
   const navItems = [
     { href: '/dashboard', label: 'Control Overview', icon: LayoutDashboard },
     { href: '/dashboard/zones', label: 'Risk Zones & Map', icon: MapPin },
+    { href: '/dashboard/place-risk', label: 'Check a Place', icon: Search },
     { href: '/dashboard/simulator', label: 'What-If Simulator', icon: SlidersHorizontal, highlight: true },
     { href: '/dashboard/alerts', label: 'Alert Simulations', icon: Bell },
     { href: '/dashboard/sources', label: 'Data Sources', icon: Database },
@@ -30,13 +31,12 @@ export default function DashboardSidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition ${
-                  isActive
+                className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition ${isActive
                     ? 'bg-sky-50 text-sky-700 border border-sky-100 font-bold'
                     : item.highlight
-                    ? 'bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-100'
-                    : 'text-slate-600 hover:bg-sky-50 hover:text-sky-700'
-                }`}
+                      ? 'bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-100'
+                      : 'text-slate-600 hover:bg-sky-50 hover:text-sky-700'
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <Icon className={`w-4 h-4 ${isActive ? 'text-sky-700' : 'text-slate-500'}`} />
@@ -66,7 +66,7 @@ export default function DashboardSidebar() {
         </div>
       </div>
 
-      {/* System Status Box */}
+
       <div className="p-4 border-t border-slate-200">
         <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-1.5 text-xs">
           <div className="flex items-center justify-between">

@@ -23,7 +23,10 @@ def validate_aoi(west: float, south: float, east: float, north: float) -> None:
 
 
 def safe_filename(filename: str | None) -> str:
-    value = Path(filename or "import.bin").name
+    raw = filename or "import.bin"
+    if Path(raw).name != raw or "/" in raw or "\\" in raw:
+        raise HTTPException(status_code=422, detail="Filename must not contain a path")
+    value = Path(raw).name
     cleaned = _SAFE_NAME.sub("_", value).strip("._")
     return cleaned[:180] or "import.bin"
 

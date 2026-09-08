@@ -5,16 +5,22 @@ import {
   DashboardSummary,
   DataSourceStatus,
   HistoricalLandslide,
+  IngestionRun,
+  PlaceRiskResult,
   RiskZone,
   RoadSegment,
   SimulationRequest,
   SimulationResponse,
+  SourceImportRequest,
+  SourceImportResult,
   Village,
 } from './types';
 import {
   mockAlerts,
   mockDashboardSummary,
+  mockDataSources,
   mockHistoricalLandslides,
+  mockIngestionRuns,
   mockReports,
   mockRiskZones,
   mockRoadSegments,
@@ -104,21 +110,77 @@ export async function getCitizenReports(): Promise<CitizenReport[]> {
 
 export async function getDataSources(): Promise<DataSourceStatus[]> {
   const result = await fetchApi<{ sources: DataSourceStatus[] }>('/api/v1/sources/status');
-  return result.ok ? result.data.sources : [];
+  if (result.ok) return result.data.sources;
+  return preparedCopy(mockDataSources);
 }
 
-// Legacy infrastructure routes still require a role token. Until the stable
-// GeoJSON endpoints are populated, these arrays are explicit prepared demos.
+export async function getIngestionRuns(sourceSlug?: string): Promise<IngestionRun[]> {
+  const query = sourceSlug ? `?source_slug=${encodeURIComponent(sourceSlug)}` : '';
+  const result = await fetchApi<{ runs: IngestionRun[] }>(`/api/v1/sources/ingestion-runs${query}`);
+  if (result.ok) return result.data.runs;
+  const filtered = sourceSlug
+    ? mockIngestionRuns.filter((r) => r.source_slug === sourceSlug)
+    : mockIngestionRuns;
+  return preparedCopy(filtered);
+}
+
+export async function importInstitutionalSource(
+  request: SourceImportRequest,
+): Promise<ApiResult<SourceImportResult>> {
+  const form = new FormData();
+  form.set('file', request.file);
+  form.set('west', String(request.west));
+  form.set('south', String(request.south));
+  form.set('east', String(request.east));
+  form.set('north', String(request.north));
+  form.set('source_version', request.sourceVersion);
+  form.set('authorization_reference', request.authorizationReference);
+  form.set('license_reference', request.licenseReference);
+  form.set('terms_acknowledged', 'true');
+  if (request.observedAt) form.set('observed_at', request.observedAt);
+  if (request.variable) form.set('variable', request.variable);
+  if (request.unit) form.set('unit', request.unit);
+
+  return fetchApi<SourceImportResult>(`/api/v1/sources/${request.sourceSlug}/imports`, {
+    method: 'POST',
+    body: form,
+    headers: request.authorityToken
+      ? { Authorization: `Bearer ${request.authorityToken}` }
+      : undefined,
+  });
+}
+
+export async function lookupPlaceRisk(
+  address: string,
+  refreshWeather = false,
+): Promise<ApiResult<PlaceRiskResult>> {
+  const query = new URLSearchParams({ address, refresh_weather: String(refreshWeather) });
+  return fetchApi<PlaceRiskResult>(`/api/v1/place-risk?${query}`);
+}
+
+
 export async function getVillages(): Promise<Village[]> {
-  return preparedCopy(mockVillages);
+  const result = await fetchApi<Village[]>('/api/v1/app/settlements');
+  return readFallback(
+    result,
+    mockVillages.map((village) => ({ ...village, provenance: 'prepared_demo' })),
+  );
 }
 
 export async function getRoads(): Promise<RoadSegment[]> {
-  return preparedCopy(mockRoadSegments);
+  const result = await fetchApi<RoadSegment[]>('/api/v1/app/roads');
+  return readFallback(
+    result,
+    mockRoadSegments.map((road) => ({ ...road, provenance: 'prepared_demo' })),
+  );
 }
 
 export async function getHistoricalLandslides(): Promise<HistoricalLandslide[]> {
-  return preparedCopy(mockHistoricalLandslides);
+  const result = await fetchApi<HistoricalLandslide[]>('/api/v1/app/landslide-events');
+  return readFallback(
+    result,
+    mockHistoricalLandslides.map((event) => ({ ...event, provenance: 'prepared_demo' })),
+  );
 }
 
 export async function runSimulation(req: SimulationRequest): Promise<SimulationResponse> {
@@ -140,15 +202,15 @@ export async function runSimulation(req: SimulationRequest): Promise<SimulationR
   const priority = projected >= 76 ? 'URGENT' : projected >= 51 ? 'HIGH' : projected >= 26 ? 'MEDIUM' : 'LOW';
   const actions = projected >= 76
     ? [
-        `SIMULATION: Prepare an evacuation-warning draft for ${baseZone.affected_villages.join(', ')}.`,
-        `SIMULATION: Prepare road restrictions for ${baseZone.affected_roads.join(', ')}.`,
-        'AUTHORITY REVIEW: Obtain authenticated approval before contacting the public or response agencies.',
-      ]
+      `SIMULATION: Prepare an evacuation-warning draft for ${baseZone.affected_villages.join(', ')}.`,
+      `SIMULATION: Prepare road restrictions for ${baseZone.affected_roads.join(', ')}.`,
+      'AUTHORITY REVIEW: Obtain authenticated approval before contacting the public or response agencies.',
+    ]
     : projected >= 51
       ? [
-          `MONITORING: Review ${baseZone.name} at shorter intervals.`,
-          `ADVISORY DRAFT: Prepare a high-standby brief for ${baseZone.district}.`,
-        ]
+        `MONITORING: Review ${baseZone.name} at shorter intervals.`,
+        `ADVISORY DRAFT: Prepare a high-standby brief for ${baseZone.district}.`,
+      ]
       : ['ROUTINE: Continue modelled weather and prepared satellite monitoring.'];
 
   return {

@@ -114,8 +114,8 @@ class IngestionService:
                 }
                 statement = self._insert_for(session, SatelliteScene, values, ["source_id", "external_id"])
                 if statement is not None:
-                    await session.execute(statement)
-                    written += 1
+                    result = await session.execute(statement)
+                    written += max(result.rowcount or 0, 0)
                 else:
                     session.add(SatelliteScene(**values))
                     written += 1
@@ -145,15 +145,23 @@ class IngestionService:
                     ["source_id", "external_id", "variable", "observed_at"],
                 )
                 if statement is not None:
-                    await session.execute(statement)
-                    written += 1
+                    result = await session.execute(statement)
+                    written += max(result.rowcount or 0, 0)
                 else:
                     session.add(Observation(**values))
                     written += 1
         return written
 
-    async def run(self, adapter: SourceAdapter, aoi: AreaOfInterest, **kwargs):
+    async def run(
+        self,
+        adapter: SourceAdapter,
+        aoi: AreaOfInterest,
+        *,
+        audit_context: dict | None = None,
+        **kwargs,
+    ):
         started_at = datetime.now(timezone.utc)
+        audit_context = audit_context or {}
         async with self._session_factory.begin() as session:
             source = await session.scalar(select(DataSource).where(DataSource.slug == adapter.descriptor.slug))
             if source is None:
@@ -172,7 +180,22 @@ class IngestionService:
                 )
                 session.add(source)
                 await session.flush()
-            run = IngestionRun(source_id=source.id, status="running", started_at=started_at)
+            run = IngestionRun(
+                source_id=source.id,
+                status="running",
+                started_at=started_at,
+                aoi_wkt=(
+                    f"POLYGON(({aoi.west} {aoi.south},{aoi.east} {aoi.south},"
+                    f"{aoi.east} {aoi.north},{aoi.west} {aoi.north},{aoi.west} {aoi.south}))"
+                ),
+                ingestion_method=audit_context.get("ingestion_method"),
+                initiated_by=audit_context.get("initiated_by"),
+                initiator_role=audit_context.get("initiator_role"),
+                authorization_reference=audit_context.get("authorization_reference"),
+                license_reference=audit_context.get("license_reference"),
+                original_filename=audit_context.get("original_filename"),
+                media_type=audit_context.get("media_type"),
+            )
             session.add(run)
             await session.flush()
             run_id = run.id
@@ -190,7 +213,18 @@ class IngestionService:
                 if batch.raw_payload is not None:
                     directory = Path(settings.object_storage_path) / source.slug
                     directory.mkdir(parents=True, exist_ok=True)
-                    suffix = ".json" if batch.media_type == "application/json" else ".bin"
+                    suffixes = {
+                        "application/json": ".json",
+                        "application/geo+json": ".geojson",
+                        "text/csv": ".csv",
+                        "image/tiff": ".tif",
+                        "application/x-netcdf": ".nc",
+                        "application/x-hdf5": ".h5",
+                        "application/x-hdf": ".hdf",
+                        "application/zip": ".zip",
+                        "application/x-zip-compressed": ".zip",
+                    }
+                    suffix = suffixes.get(batch.media_type, ".bin")
                     path = directory / f"{checksum}{suffix}"
                     if not path.exists():
                         path.write_bytes(batch.raw_payload)
@@ -212,9 +246,18 @@ class IngestionService:
                 run.records_read = len(batch.records)
                 run.records_written = records_written
                 run.quality_flags = batch.quality_flags
+                run.checksum = checksum if batch.raw_payload is not None else None
+                run.media_type = batch.media_type
                 source.last_success_at = run.finished_at
                 source.last_error = None
-                return {"run_id": run.id, "status": run.status, "records_read": len(batch.records), "records_written": records_written, "asset_uri": asset_uri, "quality_flags": batch.quality_flags}
+                return {
+                    "run_id": run.id,
+                    "status": run.status,
+                    "records_read": len(batch.records),
+                    "records_written": records_written,
+                    "checksum": checksum if batch.raw_payload is not None else None,
+                    "quality_flags": batch.quality_flags,
+                }
         except Exception as exc:
             async with self._session_factory.begin() as session:
                 run = await session.get(IngestionRun, run_id)

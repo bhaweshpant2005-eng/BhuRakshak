@@ -16,6 +16,7 @@ from backend.api.routers import (
     dashboard,
     health,
     infrastructure,
+    place_risk,
     reports,
     risk,
     simulation,
@@ -82,6 +83,7 @@ app.include_router(alerts.router, prefix=settings.api_prefix, tags=["Alerts"])
 app.include_router(reports.router, prefix=settings.api_prefix, tags=["Reports"])
 app.include_router(infrastructure.router, prefix=settings.api_prefix, tags=["Infrastructure"])
 app.include_router(sources.router, prefix=settings.api_prefix, tags=["Data Sources"])
+app.include_router(place_risk.router, prefix=settings.api_prefix, tags=["Place Risk"])
 app.include_router(app_data.router, prefix=settings.api_prefix, tags=["Application Data"])
 
 

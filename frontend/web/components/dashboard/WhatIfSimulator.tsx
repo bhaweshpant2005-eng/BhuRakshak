@@ -28,8 +28,8 @@ export default function WhatIfSimulator({
   const [selectedZoneId, setSelectedZoneId] = useState<string>(
     initialZoneId || zones[0]?.zone_id || 'Z-NER-001'
   );
-  const [rainfallChange, setRainfallChange] = useState<number>(50); // +50% default
-  const [durationHours, setDurationHours] = useState<number>(24); // 24h default
+  const [rainfallChange, setRainfallChange] = useState<number>(50);
+  const [durationHours, setDurationHours] = useState<number>(24);
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<SimulationResponse | null>(null);
 
@@ -119,7 +119,7 @@ export default function WhatIfSimulator({
           </div>
         </div>
 
-        {/* Duration Slider */}
+
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <label className="text-sm font-semibold text-slate-950 flex items-center gap-2">

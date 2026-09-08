@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { RiskZone } from '@/lib/api/types';
 import { getRiskZones } from '@/lib/api/services';
@@ -8,6 +8,14 @@ import WhatIfSimulator from '@/components/dashboard/WhatIfSimulator';
 import { SlidersHorizontal } from 'lucide-react';
 
 export default function SimulatorPage() {
+  return (
+    <Suspense fallback={<div className="h-96 flex items-center justify-center text-slate-500 font-mono text-xs">Loading Scenario Simulation Engine...</div>}>
+      <SimulatorContent />
+    </Suspense>
+  );
+}
+
+function SimulatorContent() {
   const searchParams = useSearchParams();
   const zoneIdParam = searchParams.get('zone_id');
 
