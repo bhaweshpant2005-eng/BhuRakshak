@@ -8,7 +8,7 @@ export default function PublicFooter() {
         <div>
           <div className="flex items-center gap-2 text-white font-bold text-lg mb-3">
             <ShieldAlert className="w-5 h-5 text-red-500" />
-            <span>NER-SENTRY</span>
+            <span>Bhu-Rakshak</span>
           </div>
           <p className="text-sm text-slate-400 leading-relaxed">
             AI-based Landslide Risk Prediction, Early Warning & Decision Support System designed for the North Eastern Region of India.
@@ -54,7 +54,7 @@ export default function PublicFooter() {
         </div>
       </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-slate-900 text-center text-xs text-slate-500">
-        © 2026 NER-SENTRY Hackathon Team. Official Decision Support Platform for North East India.
+        © 2026 Bhu-Rakshak Hackathon Team. Official Decision Support Platform for North East India.
       </div>
     </footer>
   );

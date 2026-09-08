@@ -24,7 +24,7 @@ export default function PublicNavbar() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-xl tracking-tight text-white">NER-SENTRY</span>
+              <span className="font-bold text-xl tracking-tight text-white">Bhu-Rakshak</span>
               <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-mono border border-amber-500/30">
                 AI Early Warning
               </span>

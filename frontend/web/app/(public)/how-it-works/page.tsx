@@ -31,7 +31,7 @@ export default function HowItWorksPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
       <div className="text-center space-y-4 max-w-3xl mx-auto">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white">How NER-SENTRY Works</h1>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-white">How Bhu-Rakshak Works</h1>
         <p className="text-slate-300 text-base">
           From raw satellite rainfall feeds to authority control-room action in milliseconds.
         </p>

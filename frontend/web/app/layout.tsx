@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'NER-SENTRY — AI Landslide Risk & Decision Support',
+  title: 'Bhu-Rakshak — AI Landslide Risk & Decision Support',
   description: 'AI-Based Landslide Risk Prediction, Early Warning & Decision Support Platform for North Eastern Region (NER)',
 };
 

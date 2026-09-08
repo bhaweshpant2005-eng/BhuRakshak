@@ -35,7 +35,7 @@ export default function AboutPage() {
       <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-8 space-y-6">
         <h2 className="text-2xl font-bold text-white flex items-center gap-2">
           <ShieldAlert className="w-6 h-6 text-red-500" />
-          <span>NER-SENTRY Solution Architecture</span>
+          <span>Bhu-Rakshak Solution Architecture</span>
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm">
           <div className="bg-slate-950 p-5 rounded-lg border border-slate-800 space-y-2">

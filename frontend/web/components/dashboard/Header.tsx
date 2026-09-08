@@ -35,7 +35,7 @@ export default function DashboardHeader({ onRefresh }: { onRefresh?: () => void 
           </div>
           <div>
             <h1 className="font-extrabold text-lg tracking-tight text-white flex items-center gap-2">
-              <span>NER-SENTRY</span>
+              <span>Bhu-Rakshak</span>
               <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-800/60">
                 Disaster Control Room
               </span>
