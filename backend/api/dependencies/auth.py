@@ -60,8 +60,8 @@ async def get_current_user(
     return CurrentUser(user_id=token_payload.sub, email=token_payload.email, role=token_payload.role)
 
 
-async def require_role(*allowed_roles: UserRole):
-    """Dependency factory to require specific roles."""
+def require_role(*allowed_roles: UserRole):
+    """Return a FastAPI dependency that requires one of the supplied roles."""
 
     async def role_checker(current_user: CurrentUser = Depends(get_current_user)) -> CurrentUser:
         if current_user.role not in allowed_roles:

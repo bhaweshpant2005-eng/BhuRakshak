@@ -23,7 +23,8 @@ import {
 import { getRiskLevel } from '../utils/riskUtils';
 
 function preparedCopy<T>(value: T): T {
-  return structuredClone(value);
+  if (typeof structuredClone === 'function') return structuredClone(value);
+  return JSON.parse(JSON.stringify(value)) as T;
 }
 
 function readFallback<T>(result: ApiResult<T>, fallback: T): T {
@@ -60,10 +61,33 @@ export async function getAlerts(): Promise<Alert[]> {
   );
 }
 
-export async function acknowledgeAlert(): Promise<Alert | null> {
-  // Local APIs intentionally do not pretend that acknowledging a prepared alert
-  // contacts an authority or public warning channel.
-  return null;
+export async function acknowledgeAlert(id: string): Promise<Alert | null> {
+  const current = await fetchApi<Alert[]>(`/api/v1/app/alerts`);
+  if (!current.ok) return null;
+  const alert = current.data.find((item) => item.id === id);
+  if (!alert || alert.status !== 'draft') return null;
+
+  const result = await fetchApi<Pick<Alert, 'id' | 'status' | 'public_dispatch'>>(
+    `/api/v1/app/alerts/${id}/approve-simulation`,
+    { method: 'POST' },
+  );
+  if (!result.ok) return null;
+  return { ...alert, ...result.data, acknowledged: true };
+}
+
+export async function recordResponseAction(
+  alertId: string,
+  actionType: 'medical' | 'authority' | 'warning_simulation',
+  status: 'recorded' | 'cancelled',
+): Promise<{ recorded_at: string } | null> {
+  const result = await fetchApi<{ recorded_at: string }>(
+    `/api/v1/app/alerts/${alertId}/response-actions`,
+    {
+      method: 'PUT',
+      body: JSON.stringify({ action_type: actionType, status }),
+    },
+  );
+  return result.ok ? result.data : null;
 }
 
 export async function getCitizenReports(): Promise<CitizenReport[]> {

@@ -14,6 +14,7 @@ from backend.api.database.models import (
     AlertEvent,
     DataSource,
     FieldReport,
+    IngestionRun,
     ReportAnalysis,
     ReportReview,
     ResponseAction,
@@ -111,6 +112,34 @@ class DatabaseService:
                 "freshness_seconds": source.freshness_seconds,
                 "metadata": source.metadata_json,
             } for source in sources]
+
+    async def list_ingestion_runs(self, limit: int = 50) -> list[dict[str, Any]]:
+        async with self._session_factory() as session:
+            rows = (
+                await session.execute(
+                    select(IngestionRun, DataSource)
+                    .join(DataSource, IngestionRun.source_id == DataSource.id)
+                    .order_by(IngestionRun.started_at.desc())
+                    .limit(min(max(limit, 1), 200))
+                )
+            ).all()
+            return [
+                {
+                    "id": run.id,
+                    "source_slug": source.slug,
+                    "source_name": source.name,
+                    "status": run.status,
+                    "started_at": run.started_at,
+                    "finished_at": run.finished_at,
+                    "coverage_start": run.coverage_start,
+                    "coverage_end": run.coverage_end,
+                    "records_read": run.records_read,
+                    "records_written": run.records_written,
+                    "quality_flags": run.quality_flags,
+                    "error": run.error,
+                }
+                for run, source in rows
+            ]
 
     async def create_field_report(
         self,

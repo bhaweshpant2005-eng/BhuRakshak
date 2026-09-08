@@ -145,6 +145,17 @@ async def seed_demo_data(session: AsyncSession) -> None:
                 metadata_json={"notes": descriptor.notes} if descriptor.notes else {},
             )
             session.add(source)
+        else:
+            source.name = descriptor.name
+            source.category = descriptor.category
+            source.provider = descriptor.provider
+            source.access_type = descriptor.access_type
+            source.provenance = descriptor.provenance
+            source.status = descriptor.status
+            source.license_name = descriptor.license_name
+            source.attribution = descriptor.attribution
+            source.credential_env = descriptor.credential_env
+            source.metadata_json = {"notes": descriptor.notes} if descriptor.notes else {}
         source_rows[descriptor.slug] = source
     await session.flush()
 
