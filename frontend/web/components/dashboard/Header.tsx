@@ -27,46 +27,47 @@ export default function DashboardHeader({ onRefresh }: { onRefresh?: () => void 
   }, []);
 
   return (
-    <header className="bg-slate-900 border-b border-slate-800 px-6 py-3 flex items-center justify-between sticky top-0 z-40">
+    <header className="bg-white border-b border-slate-200 px-4 sm:px-6 py-3 flex items-center justify-between sticky top-0 z-40">
       <div className="flex items-center gap-4">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-lg bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-500">
-            <ShieldAlert className="w-5 h-5 animate-pulse" />
+          <div className="size-9 rounded-lg bg-sky-100 border border-sky-200 flex items-center justify-center text-sky-700">
+            <ShieldAlert className="size-5" />
           </div>
           <div>
-            <h1 className="font-extrabold text-lg tracking-tight text-white flex items-center gap-2">
+            <h1 className="font-extrabold text-lg text-slate-950 flex items-center gap-2">
               <span>Bhu-Rakshak</span>
-              <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-800/60">
+              <span className="hidden sm:inline text-[10px] font-mono px-2 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-200">
                 Disaster Control Room
               </span>
             </h1>
-            <p className="text-[11px] text-slate-400">North Eastern State & District Authority Operations</p>
+            <p className="text-[11px] text-slate-500">North Eastern State & District Authority Operations</p>
           </div>
         </Link>
       </div>
 
-      <div className="flex items-center gap-6">
-        <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-400 bg-slate-950 px-3 py-1.5 rounded border border-slate-800">
-          <Clock className="w-3.5 h-3.5 text-amber-400" />
+      <div className="flex items-center gap-3 sm:gap-4">
+        <div className="hidden md:flex items-center gap-2 text-xs font-mono text-slate-500 bg-slate-50 px-3 py-1.5 rounded border border-slate-200">
+          <Clock className="w-3.5 h-3.5 text-sky-600" />
           <span>{timeStr || 'SYSTEM ACTIVE'}</span>
         </div>
 
         {onRefresh && (
           <button
             onClick={onRefresh}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium bg-white hover:bg-sky-50 text-slate-700 border border-slate-200 transition duration-200"
           >
-            <RefreshCw className="w-3.5 h-3.5 text-slate-400" />
+            <RefreshCw className="w-3.5 h-3.5 text-sky-600" />
             <span>Refresh Feeds</span>
           </button>
         )}
 
         <Link
           href="/dashboard/alerts"
-          className="relative p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition"
+          aria-label="View active alerts"
+          className="relative p-2 rounded-lg bg-white text-slate-600 hover:text-sky-700 hover:bg-sky-50 border border-slate-200 transition duration-200"
         >
           <Bell className="w-4 h-4" />
-          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
+          <span className="absolute -top-1 -right-1 size-2.5 rounded-full bg-red-500"></span>
         </Link>
       </div>
     </header>

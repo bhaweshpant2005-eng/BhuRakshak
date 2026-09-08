@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import { RiskZone, Village, RoadSegment } from '@/lib/api/types';
-import { getRiskColor, getRiskLevel } from '@/lib/utils/riskUtils';
+import { getRiskColor } from '@/lib/utils/riskUtils';
 
 export default function RiskMap({
   zones,
@@ -32,11 +32,21 @@ export default function RiskMap({
       zoomControl: true,
     });
 
-    // Dark carto tile layer
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; CartoDB & OpenStreetMap contributors',
-      maxZoom: 18,
-    }).addTo(map);
+    // Use public basemaps so the map renders without an API key or warning watermark.
+    const satellite = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        attribution: 'Tiles &copy; Esri',
+        maxZoom: 18,
+      }
+    );
+    const streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 19,
+    });
+
+    satellite.addTo(map);
+    L.control.layers({ Satellite: satellite, Streets: streets }, undefined, { position: 'topright' }).addTo(map);
 
     mapRef.current = map;
 
@@ -71,9 +81,9 @@ export default function RiskMap({
         }).addTo(map);
 
         polyline.bindPopup(`
-          <div style="font-family: monospace; font-size: 12px; color: #f8fafc;">
-            <strong style="color: #f59e0b;">${road.name} (${road.highway_code})</strong><br/>
-            Status: <span style="color: #ef4444; font-weight: bold;">${road.status}</span><br/>
+          <div style="font-family: system-ui, sans-serif; font-size: 12px; color: #334155;">
+            <strong style="color: #0369a1;">${road.name} (${road.highway_code})</strong><br/>
+            Status: <span style="color: #dc2626; font-weight: bold;">${road.status}</span><br/>
             Risk Score: ${road.risk_score} / 100<br/>
             Route: ${road.start_point} &rarr; ${road.end_point}
           </div>
@@ -85,15 +95,15 @@ export default function RiskMap({
     villages.forEach((village) => {
       if (village.coordinates) {
         const marker = L.circleMarker([village.coordinates.lat, village.coordinates.lng], {
-          radius: 6,
+          radius: 3,
           color: '#38bdf8',
           fillColor: '#38bdf8',
           fillOpacity: 0.8,
         }).addTo(map);
 
         marker.bindPopup(`
-          <div style="font-family: sans-serif; font-size: 12px; color: #f8fafc;">
-            <strong style="color: #38bdf8;">Village: ${village.name}</strong><br/>
+          <div style="font-family: system-ui, sans-serif; font-size: 12px; color: #334155;">
+            <strong style="color: #0369a1;">Village: ${village.name}</strong><br/>
             District: ${village.district}, ${village.state}<br/>
             Population: <strong>${village.population.toLocaleString()}</strong><br/>
             Risk Score: ${village.risk_score} (${village.risk_level})
@@ -109,31 +119,31 @@ export default function RiskMap({
 
       // Circle Marker representing Risk Zone
       const circle = L.circleMarker([zone.geometry.lat, zone.geometry.lng], {
-        radius: isSelected ? 22 : 16,
+        radius: isSelected ? 8 : 5,
         color: isSelected ? '#ffffff' : color,
         fillColor: color,
-        fillOpacity: isSelected ? 0.85 : 0.65,
-        weight: isSelected ? 3 : 2,
+        fillOpacity: 0.9,
+        weight: isSelected ? 2 : 1.5,
       }).addTo(map);
 
       // Popup content
       const popupHtml = `
-        <div style="font-family: system-ui, sans-serif; font-size: 12px; color: #f8fafc; min-width: 200px;">
-          <div style="font-weight: bold; font-size: 14px; margin-bottom: 4px; color: #ffffff;">
+        <div style="font-family: system-ui, sans-serif; font-size: 12px; color: #334155; min-width: 200px;">
+          <div style="font-weight: bold; font-size: 14px; margin-bottom: 4px; color: #0f172a;">
             ${zone.name}
           </div>
-          <div style="color: #94a3b8; font-size: 11px; margin-bottom: 8px;">
+          <div style="color: #64748b; font-size: 11px; margin-bottom: 8px;">
             ${zone.district}, ${zone.state}
           </div>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; background: #020617; padding: 6px; border-radius: 4px; margin-bottom: 8px; border: 1px solid #1e293b;">
+          <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 6px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #e2e8f0;">
             <span style="font-family: monospace;">Risk Score:</span>
             <span style="font-weight: bold; font-family: monospace; color: ${color}; font-size: 14px;">
               ${zone.risk_score} (${zone.risk_level})
             </span>
           </div>
 
-          <div style="display: grid; grid-template-cols: 1fr 1fr; gap: 4px; font-size: 11px; color: #cbd5e1; margin-bottom: 8px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 11px; color: #475569; margin-bottom: 8px;">
             <div>Rainfall: <strong>${zone.rainfall_mm} mm</strong></div>
             <div>Soil Sat: <strong>${zone.soil_moisture}%</strong></div>
             <div>Slope: <strong>${zone.slope_deg}°</strong></div>
@@ -142,7 +152,7 @@ export default function RiskMap({
 
           <button
             id="btn-zone-${zone.zone_id}"
-            style="width: 100%; background: #f59e0b; color: #020617; font-weight: bold; border: none; padding: 6px; border-radius: 4px; cursor: pointer; font-size: 11px;"
+            style="width: 100%; background: #0284c7; color: #ffffff; font-weight: bold; border: none; padding: 7px; border-radius: 6px; cursor: pointer; font-size: 11px;"
           >
             Select Sector for Simulation
           </button>

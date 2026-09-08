@@ -18,26 +18,26 @@ export default function AlertsPanel({ initialAlerts }: { initialAlerts: Alert[] 
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl flex flex-col h-full overflow-hidden">
-      <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+    <div className="surface-card flex flex-col h-full overflow-hidden">
+      <div className="p-4 border-b border-slate-100 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Bell className="w-4 h-4 text-amber-400" />
-          <h2 className="font-bold text-white text-base">Active Disaster Warnings</h2>
+          <Bell className="w-4 h-4 text-sky-700" />
+          <h2 className="font-bold text-slate-950 text-base">Active Disaster Warnings</h2>
         </div>
-        <span className="text-xs font-mono bg-red-500/20 text-red-400 px-2 py-0.5 rounded border border-red-500/30">
+        <span className="text-xs font-mono bg-red-50 text-red-700 px-2 py-0.5 rounded border border-red-200 tabular-nums">
           {alerts.filter((a) => !a.acknowledged).length} Unacknowledged
         </span>
       </div>
 
-      <div className="divide-y divide-slate-800/80 overflow-y-auto max-h-[500px]">
+      <div className="divide-y divide-slate-100 overflow-y-auto max-h-[500px]">
         {alerts.length === 0 ? (
           <div className="p-8 text-center text-slate-500 text-sm">No active emergency alerts in feed.</div>
         ) : (
           alerts.map((alert) => (
             <div
               key={alert.id}
-              className={`p-4 space-y-3 transition ${
-                alert.acknowledged ? 'bg-slate-900/40 opacity-70' : 'bg-slate-900/90'
+              className={`p-4 space-y-3 transition duration-200 ${
+                alert.acknowledged ? 'bg-slate-50 opacity-70' : 'bg-white'
               }`}
             >
               <div className="flex items-start justify-between gap-2">
@@ -46,17 +46,17 @@ export default function AlertsPanel({ initialAlerts }: { initialAlerts: Alert[] 
                     <span className={`text-[10px] font-bold font-mono px-2 py-0.5 rounded border ${getRiskBadgeClasses(alert.severity)}`}>
                       {alert.severity}
                     </span>
-                    <span className="text-xs text-slate-400 font-mono">{formatDate(alert.timestamp)}</span>
+                    <span className="text-xs text-slate-500 font-mono">{formatDate(alert.timestamp)}</span>
                   </div>
-                  <h3 className="font-bold text-white text-sm flex items-center gap-1.5">
+                  <h3 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
                     {alert.severity === 'CRITICAL' && <ShieldAlert className="w-4 h-4 text-red-500 shrink-0" />}
                     <span>{alert.title}</span>
                   </h3>
-                  <p className="text-xs text-amber-400 font-mono">Sector: {alert.zone_name}</p>
+                  <p className="text-xs text-sky-700 font-mono">Sector: {alert.zone_name}</p>
                 </div>
               </div>
 
-              <p className="text-xs text-slate-300 leading-relaxed bg-slate-950 p-2.5 rounded border border-slate-800">
+              <p className="text-pretty text-xs text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded border border-slate-100">
                 {alert.description}
               </p>
 
@@ -67,7 +67,7 @@ export default function AlertsPanel({ initialAlerts }: { initialAlerts: Alert[] 
                     <span>EVACUATION RECOMMENDED</span>
                   </span>
                 ) : (
-                  <span className="text-[11px] text-slate-400">High Monitoring</span>
+                  <span className="text-[11px] text-slate-500">High Monitoring</span>
                 )}
 
                 {alert.acknowledged ? (
@@ -78,7 +78,7 @@ export default function AlertsPanel({ initialAlerts }: { initialAlerts: Alert[] 
                 ) : (
                   <button
                     onClick={() => handleAcknowledge(alert.id)}
-                    className="px-3 py-1 rounded text-xs font-semibold bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow"
+                    className="button-primary px-3 py-1 text-xs"
                   >
                     Acknowledge Alert
                   </button>

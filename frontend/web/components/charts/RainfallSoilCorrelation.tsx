@@ -24,13 +24,13 @@ export default function RainfallSoilCorrelation() {
   ];
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+    <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-bold text-white text-sm">24h Rainfall vs Soil Moisture Saturation</h3>
-          <p className="text-xs text-slate-400">Environmental triggers across monitored sectors</p>
+          <h3 className="font-bold text-slate-950 text-sm">24h Rainfall vs Soil Moisture Saturation</h3>
+          <p className="text-xs text-slate-500">Environmental triggers across monitored sectors</p>
         </div>
-        <span className="text-[10px] font-mono bg-slate-800 text-blue-400 px-2 py-0.5 rounded border border-slate-700">
+        <span className="text-[10px] font-mono bg-slate-50 text-blue-400 px-2 py-0.5 rounded border border-slate-200">
           Geo Ingestion
         </span>
       </div>

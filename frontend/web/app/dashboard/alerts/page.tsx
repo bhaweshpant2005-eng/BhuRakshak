@@ -19,7 +19,7 @@ export default function AlertsPage() {
 
   if (loading) {
     return (
-      <div className="h-96 flex items-center justify-center text-slate-400 font-mono text-xs">
+      <div className="h-96 flex items-center justify-center text-slate-500 font-mono text-xs">
         Loading Alerts Feed...
       </div>
     );
@@ -27,13 +27,13 @@ export default function AlertsPage() {
 
   return (
     <div className="space-y-6 pb-12">
-      <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
+          <h1 className="text-2xl font-extrabold text-slate-950 flex items-center gap-2">
             <Bell className="w-6 h-6 text-red-500" />
             <span>Disaster Warning & Alert Dispatch Center</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Review active emergency warnings, acknowledge alerts, and trigger evacuation notices
           </p>
         </div>

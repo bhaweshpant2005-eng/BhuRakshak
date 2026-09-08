@@ -43,7 +43,7 @@ export default function ZonesPage() {
 
   if (loading) {
     return (
-      <div className="h-96 flex items-center justify-center text-slate-400 font-mono text-xs">
+      <div className="h-96 flex items-center justify-center text-slate-500 font-mono text-xs">
         Loading GIS Zones Feed...
       </div>
     );
@@ -53,25 +53,25 @@ export default function ZonesPage() {
     <div className="space-y-6 pb-12">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
+          <h1 className="text-2xl font-extrabold text-slate-950 flex items-center gap-2">
             <MapPin className="w-6 h-6 text-amber-500" />
             <span>Monitored Landslide Risk Zones</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Filterable GIS coverage across North Eastern Region states and high-risk districts
           </p>
         </div>
 
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
+          <div className="flex items-center gap-2 text-xs font-mono text-slate-500">
             <Filter className="w-4 h-4 text-amber-400" />
             <span>State:</span>
           </div>
           <select
             value={filterState}
             onChange={(e) => setFilterState(e.target.value)}
-            className="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg p-2 font-medium"
+            className="bg-white border border-slate-200 text-slate-700 text-xs rounded-lg p-2 font-medium"
           >
             <option value="ALL">All States (NER)</option>
             <option value="Meghalaya">Meghalaya</option>
@@ -87,7 +87,7 @@ export default function ZonesPage() {
           <select
             value={filterLevel}
             onChange={(e) => setFilterLevel(e.target.value)}
-            className="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg p-2 font-medium"
+            className="bg-white border border-slate-200 text-slate-700 text-xs rounded-lg p-2 font-medium"
           >
             <option value="ALL">All Severity Levels</option>
             <option value="CRITICAL">CRITICAL (&gt;75)</option>
@@ -109,11 +109,11 @@ export default function ZonesPage() {
           />
 
           {selectedZone && (
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div>
-                  <span className="text-[10px] font-mono text-slate-400 uppercase">Active Sector Card</span>
-                  <h3 className="font-bold text-white text-lg">{selectedZone.name}</h3>
+                  <span className="text-[10px] font-mono text-slate-500 uppercase">Active Sector Card</span>
+                  <h3 className="font-bold text-slate-950 text-lg">{selectedZone.name}</h3>
                 </div>
                 <span className="text-sm font-mono font-bold text-red-400 bg-red-500/10 px-3 py-1 rounded border border-red-500/30">
                   Risk Score: {selectedZone.risk_score}
@@ -121,35 +121,35 @@ export default function ZonesPage() {
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
-                <div className="bg-slate-950 p-3 rounded border border-slate-800">
-                  <span className="text-slate-400 block text-[10px]">Rainfall (24h)</span>
+                <div className="bg-slate-50 p-3 rounded border border-slate-200">
+                  <span className="text-slate-500 block text-[10px]">Rainfall (24h)</span>
                   <span className="font-bold text-blue-400">{selectedZone.rainfall_mm} mm</span>
                 </div>
-                <div className="bg-slate-950 p-3 rounded border border-slate-800">
-                  <span className="text-slate-400 block text-[10px]">Soil Moisture</span>
+                <div className="bg-slate-50 p-3 rounded border border-slate-200">
+                  <span className="text-slate-500 block text-[10px]">Soil Moisture</span>
                   <span className="font-bold text-amber-400">{selectedZone.soil_moisture}%</span>
                 </div>
-                <div className="bg-slate-950 p-3 rounded border border-slate-800">
-                  <span className="text-slate-400 block text-[10px]">Slope Angle</span>
+                <div className="bg-slate-50 p-3 rounded border border-slate-200">
+                  <span className="text-slate-500 block text-[10px]">Slope Angle</span>
                   <span className="font-bold text-orange-400">{selectedZone.slope_deg}°</span>
                 </div>
-                <div className="bg-slate-950 p-3 rounded border border-slate-800">
-                  <span className="text-slate-400 block text-[10px]">Elevation</span>
-                  <span className="font-bold text-slate-200">{selectedZone.elevation_m} m</span>
+                <div className="bg-slate-50 p-3 rounded border border-slate-200">
+                  <span className="text-slate-500 block text-[10px]">Elevation</span>
+                  <span className="font-bold text-slate-700">{selectedZone.elevation_m} m</span>
                 </div>
               </div>
 
               <div className="flex justify-end gap-3 pt-2">
                 <Link
                   href={`/dashboard/simulator?zone_id=${selectedZone.zone_id}`}
-                  className="flex items-center gap-1 px-4 py-2 rounded text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition"
+                  className="button-primary px-4 py-2 text-xs"
                 >
                   <span>Simulate Rain Scenario</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />
                 </Link>
                 <Link
                   href={`/dashboard/zones/${selectedZone.zone_id}`}
-                  className="px-4 py-2 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition"
+                  className="px-4 py-2 rounded text-xs font-semibold bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition"
                 >
                   View Full Profile
                 </Link>

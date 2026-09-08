@@ -36,10 +36,10 @@ export default function FeaturesPage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
       <div className="text-center space-y-4 max-w-3xl mx-auto">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white">Platform Features</h1>
-        <p className="text-slate-300 text-base">
+        <h1 className="text-balance text-3xl sm:text-4xl font-extrabold text-slate-950">Platform features</h1>
+        <p className="text-pretty text-slate-600 text-base">
           A comprehensive software decision-support suite tailored for State and District Disaster Management Authorities.
         </p>
       </div>
@@ -48,12 +48,12 @@ export default function FeaturesPage() {
         {features.map((item, idx) => {
           const Icon = item.icon;
           return (
-            <div key={idx} className="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4 hover:border-slate-700 transition">
-              <div className="w-12 h-12 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
+            <div key={idx} className="surface-card-interactive p-6 space-y-4">
+              <div className="size-12 rounded-lg bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-700">
                 <Icon className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-white text-lg">{item.title}</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">{item.description}</p>
+              <h3 className="font-bold text-slate-950 text-lg">{item.title}</h3>
+              <p className="text-pretty text-slate-600 text-sm leading-relaxed">{item.description}</p>
             </div>
           );
         })}
@@ -62,7 +62,7 @@ export default function FeaturesPage() {
       <div className="text-center pt-6">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-bold bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-950/40 transition"
+          className="button-primary px-6 py-3"
         >
           Explore All Features on Dashboard
         </Link>

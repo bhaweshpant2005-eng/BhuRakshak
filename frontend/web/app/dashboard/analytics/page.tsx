@@ -21,7 +21,7 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <div className="h-96 flex items-center justify-center text-slate-400 font-mono text-xs">
+      <div className="h-96 flex items-center justify-center text-slate-500 font-mono text-xs">
         Loading Historical Analytics Engine...
       </div>
     );
@@ -29,13 +29,13 @@ export default function AnalyticsPage() {
 
   return (
     <div className="space-y-6 pb-12">
-      <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
+          <h1 className="text-2xl font-extrabold text-slate-950 flex items-center gap-2">
             <BarChart2 className="w-6 h-6 text-purple-400" />
             <span>Historical Landslide & Risk Analytics</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Correlating past disaster events with 24-hour rainfall intensity, soil saturation thresholds, and casualty data
           </p>
         </div>
@@ -53,13 +53,13 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Historical Landslides Log Table */}
-        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-5 space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
             <div className="flex items-center gap-2">
               <History className="w-5 h-5 text-amber-400" />
-              <h2 className="font-bold text-white text-base">Historical Slide Memory Log</h2>
+              <h2 className="font-bold text-slate-950 text-base">Historical Slide Memory Log</h2>
             </div>
-            <span className="text-xs font-mono bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded border border-slate-700">
+            <span className="text-xs font-mono bg-slate-50 text-slate-600 px-2.5 py-0.5 rounded border border-slate-200">
               {history.length} Major Recorded Events
             </span>
           </div>
@@ -67,7 +67,7 @@ export default function AnalyticsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
               <thead>
-                <tr className="border-b border-slate-800 text-slate-400 uppercase text-[10px]">
+                <tr className="border-b border-slate-200 text-slate-500 uppercase text-[10px]">
                   <th className="pb-2">Date</th>
                   <th className="pb-2">Location</th>
                   <th className="pb-2">State</th>
@@ -78,13 +78,13 @@ export default function AnalyticsPage() {
               </thead>
               <tbody className="divide-y divide-slate-800/80">
                 {history.map((h) => (
-                  <tr key={h.id} className="hover:bg-slate-800/50">
-                    <td className="py-2.5 text-slate-300 font-semibold">{h.date}</td>
-                    <td className="py-2.5 text-white font-bold">{h.location}</td>
+                  <tr key={h.id} className="hover:bg-sky-50">
+                    <td className="py-2.5 text-slate-600 font-semibold">{h.date}</td>
+                    <td className="py-2.5 text-slate-950 font-bold">{h.location}</td>
                     <td className="py-2.5 text-amber-400">{h.state}</td>
                     <td className="py-2.5 text-blue-400 font-bold">{h.rainfall_recorded_mm} mm</td>
                     <td className="py-2.5 text-red-400 font-bold">{h.risk_score_at_event}</td>
-                    <td className="py-2.5 text-slate-200">
+                    <td className="py-2.5 text-slate-700">
                       {h.casualties > 0 ? (
                         <span className="text-red-400 font-bold">{h.casualties} Deaths</span>
                       ) : (

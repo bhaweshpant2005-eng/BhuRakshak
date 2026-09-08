@@ -29,10 +29,10 @@ export default function HowItWorksPage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
       <div className="text-center space-y-4 max-w-3xl mx-auto">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white">How Bhu-Rakshak Works</h1>
-        <p className="text-slate-300 text-base">
+        <h1 className="text-balance text-3xl sm:text-4xl font-extrabold text-slate-950">How Bhu-Rakshak works</h1>
+        <p className="text-pretty text-slate-600 text-base">
           From raw satellite rainfall feeds to authority control-room action in milliseconds.
         </p>
       </div>
@@ -41,38 +41,38 @@ export default function HowItWorksPage() {
         {steps.map((item, idx) => {
           const Icon = item.icon;
           return (
-            <div key={idx} className="bg-slate-900 border border-slate-800 rounded-xl p-6 relative space-y-4">
+            <div key={idx} className="surface-card-interactive p-6 relative space-y-4">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-2xl font-bold text-amber-500">{item.step}</span>
-                <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center text-slate-300">
+                <span className="font-mono text-2xl font-bold text-sky-700">{item.step}</span>
+                <div className="size-10 rounded-lg bg-sky-50 flex items-center justify-center text-sky-700">
                   <Icon className="w-5 h-5" />
                 </div>
               </div>
-              <h3 className="font-bold text-white text-lg">{item.title}</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">{item.description}</p>
+              <h3 className="font-bold text-slate-950 text-lg">{item.title}</h3>
+              <p className="text-pretty text-slate-600 text-sm leading-relaxed">{item.description}</p>
             </div>
           );
         })}
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-8 space-y-4 text-center">
-        <h2 className="text-2xl font-bold text-white">AI Engine Factor Breakdown</h2>
+      <div className="surface-card p-6 sm:p-8 space-y-4 text-center">
+        <h2 className="text-balance text-2xl font-bold text-slate-950">AI Engine Factor Breakdown</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
-          <div className="bg-slate-950 p-4 rounded-lg border border-slate-800">
-            <p className="text-amber-400 font-bold text-xl">35%</p>
-            <p className="text-xs text-slate-400">24h Accumulated Rain</p>
+          <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
+            <p className="text-sky-700 font-bold text-xl">35%</p>
+            <p className="text-xs text-slate-500">24h Accumulated Rain</p>
           </div>
-          <div className="bg-slate-950 p-4 rounded-lg border border-slate-800">
-            <p className="text-amber-400 font-bold text-xl">25%</p>
-            <p className="text-xs text-slate-400">Soil Moisture Saturation</p>
+          <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
+            <p className="text-sky-700 font-bold text-xl">25%</p>
+            <p className="text-xs text-slate-500">Soil Moisture Saturation</p>
           </div>
-          <div className="bg-slate-950 p-4 rounded-lg border border-slate-800">
-            <p className="text-amber-400 font-bold text-xl">25%</p>
-            <p className="text-xs text-slate-400">Slope Angle & Elevation</p>
+          <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
+            <p className="text-sky-700 font-bold text-xl">25%</p>
+            <p className="text-xs text-slate-500">Slope Angle & Elevation</p>
           </div>
-          <div className="bg-slate-950 p-4 rounded-lg border border-slate-800">
-            <p className="text-amber-400 font-bold text-xl">15%</p>
-            <p className="text-xs text-slate-400">Historical Slide Memory</p>
+          <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
+            <p className="text-sky-700 font-bold text-xl">15%</p>
+            <p className="text-xs text-slate-500">Historical Slide Memory</p>
           </div>
         </div>
       </div>
