@@ -71,6 +71,10 @@ class Settings(BaseSettings):
     # CORS Configuration
     cors_origins: List[str] = ["http://localhost:3000", "http://localhost:3001"]
 
+    # Request protection
+    rate_limit_max_requests: int = 100
+    rate_limit_window_seconds: int = 60
+
     class Config:
         env_file = ".env"
         case_sensitive = False

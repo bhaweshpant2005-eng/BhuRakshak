@@ -1,6 +1,6 @@
 """Authentication dependencies for JWT validation and role checking."""
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthCredentials
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from typing import Optional
@@ -29,7 +29,7 @@ def decode_token(token: str) -> Optional[TokenPayload]:
 
 
 async def get_current_user(
-    credentials: Optional[HTTPAuthCredentials] = Depends(security),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
 ) -> CurrentUser:
     """Validate JWT, or expose a read-only demo identity when explicitly enabled."""
     if credentials is None:

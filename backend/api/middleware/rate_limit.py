@@ -4,6 +4,8 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 
+from backend.api.config import settings
+
 
 class InMemoryRateLimitMiddleware(BaseHTTPMiddleware):
     """Small prototype limiter; replace with Redis-backed shared limiting in a scaled deployment."""
@@ -14,7 +16,14 @@ class InMemoryRateLimitMiddleware(BaseHTTPMiddleware):
         self.visits: dict[str, deque[float]] = defaultdict(deque)
 
     async def dispatch(self, request: Request, call_next):
-        if request.url.path in {"/docs", "/openapi.json", "/api/v1/health"}:
+        exempt_paths = {
+            "/docs",
+            "/openapi.json",
+            f"{settings.api_prefix}/docs",
+            f"{settings.api_prefix}/openapi.json",
+            f"{settings.api_prefix}/health",
+        }
+        if request.url.path in exempt_paths:
             return await call_next(request)
         now = monotonic()
         client = request.client.host if request.client else "unknown"

@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.api.config import settings
 from backend.api.database import close_database, initialize_database
+from backend.api.middleware.rate_limit import InMemoryRateLimitMiddleware
 
 # Import routers
 from backend.api.routers import (
@@ -51,6 +52,14 @@ app = FastAPI(
     docs_url=f"{settings.api_prefix}/docs",
     redoc_url=f"{settings.api_prefix}/redoc",
     lifespan=lifespan,
+)
+
+# Configure request protection before routing. CORS is added afterward so
+# rate-limit responses receive the same CORS headers as normal responses.
+app.add_middleware(
+    InMemoryRateLimitMiddleware,
+    max_requests=settings.rate_limit_max_requests,
+    window_seconds=settings.rate_limit_window_seconds,
 )
 
 # Configure CORS

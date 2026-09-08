@@ -20,10 +20,15 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from backend.api.config import settings
 from backend.api.database.base import Base, PROVENANCE_ENUM, Provenance, TimestampMixin
 
-GEOMETRY_POINT = Geometry("POINT", srid=4326).with_variant(Text(), "sqlite")
-GEOMETRY_SHAPE = Geometry("GEOMETRY", srid=4326).with_variant(Text(), "sqlite")
+if settings.database_url.startswith("sqlite"):
+    GEOMETRY_POINT = Text()
+    GEOMETRY_SHAPE = Text()
+else:
+    GEOMETRY_POINT = Geometry("POINT", srid=4326)
+    GEOMETRY_SHAPE = Geometry("GEOMETRY", srid=4326)
 
 
 class DataSource(TimestampMixin, Base):
