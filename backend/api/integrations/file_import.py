@@ -9,6 +9,7 @@ from typing import Any
 
 from backend.api.database.base import Provenance
 from backend.api.integrations.base import AreaOfInterest, IngestionBatch, SourceAdapter, SourceDescriptor
+from backend.api.integrations.institutional import INSTITUTIONAL_SOURCES
 
 IMPORT_SOURCES: dict[str, SourceDescriptor] = {
     "gpm-imerg": SourceDescriptor("gpm-imerg", "GPM IMERG", "rainfall", "NASA Earthdata", "file_import", Provenance.CACHED_MODELLED, "import_available"),
@@ -17,11 +18,20 @@ IMPORT_SOURCES: dict[str, SourceDescriptor] = {
     "hydrosheds": SourceDescriptor("hydrosheds", "HydroSHEDS", "hydrology", "HydroSHEDS", "file_import", Provenance.STATIC_REFERENCE, "import_available"),
     "worldpop": SourceDescriptor("worldpop", "WorldPop", "population", "WorldPop", "file_import", Provenance.STATIC_REFERENCE, "import_available"),
     "nasa-coolr": SourceDescriptor("nasa-coolr", "NASA COOLR", "landslides", "NASA", "file_import", Provenance.STATIC_REFERENCE, "import_available"),
-    "imd": SourceDescriptor("imd", "India Meteorological Department", "weather", "IMD", "authorized_file_import", Provenance.CACHED_OBSERVED, "import_available"),
-    "gsi": SourceDescriptor("gsi", "GSI Bhusanket / NLSM", "geology_landslides", "GSI", "authorized_file_import", Provenance.CACHED_OBSERVED, "import_available"),
-    "india-wris": SourceDescriptor("india-wris", "CWC / India-WRIS", "hydrology", "CWC", "authorized_file_import", Provenance.CACHED_OBSERVED, "import_available"),
-    "bhuvan": SourceDescriptor("bhuvan", "NRSC Bhuvan / Bhoonidhi", "satellite_terrain", "NRSC", "authorized_file_import", Provenance.CACHED_OBSERVED, "import_available"),
-    "mosdac": SourceDescriptor("mosdac", "MOSDAC", "satellite_weather", "SAC/ISRO", "authorized_file_import", Provenance.CACHED_OBSERVED, "import_available"),
+    **{
+        slug: SourceDescriptor(
+            source.slug,
+            source.name,
+            source.category,
+            source.provider,
+            "authorized_file_import",
+            Provenance.CACHED_OBSERVED,
+            "import_available",
+            credential_env=source.credential_env,
+            notes=source.guidance,
+        )
+        for slug, source in INSTITUTIONAL_SOURCES.items()
+    },
 }
 
 

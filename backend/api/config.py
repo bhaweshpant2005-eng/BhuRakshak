@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     object_storage_bucket: str = "bhurakshak-assets"
     object_storage_access_key: Optional[str] = None
     object_storage_secret_key: Optional[str] = None
+    source_import_max_bytes: int = 100 * 1024 * 1024
 
     # Optional compatibility settings; the backend does not require Supabase.
     supabase_url: Optional[str] = None
