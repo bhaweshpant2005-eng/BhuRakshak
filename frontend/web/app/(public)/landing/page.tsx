@@ -9,12 +9,12 @@ export default function LandingPage() {
         <div className="absolute -right-24 -top-24 size-96 rounded-full bg-sky-100"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center space-y-7 max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-sky-200 text-sky-700 text-xs font-semibold shadow-sm">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-sky-200 text-sky-700 text-[10px] sm:text-xs font-mono font-bold tracking-wider shadow-sm uppercase">
               <ShieldAlert className="w-4 h-4" />
               <span>DISASTER MANAGEMENT & DECISION SUPPORT SYSTEM</span>
             </div>
 
-            <h1 className="text-balance text-4xl sm:text-6xl font-extrabold text-slate-950 leading-[1.08]">
+            <h1 className="font-display text-balance text-4xl sm:text-6xl font-extrabold text-slate-950 leading-[1.08]">
               Early warning and risk prediction for <span className="text-sky-700">North East India</span>
             </h1>
 
