@@ -1,4 +1,87 @@
 export type RiskLevel = 'LOW' | 'MODERATE' | 'HIGH' | 'CRITICAL';
+export type Provenance =
+  | 'live_observed'
+  | 'live_modelled'
+  | 'cached_observed'
+  | 'cached_modelled'
+  | 'derived'
+  | 'static_reference'
+  | 'prepared_demo'
+  | 'synthetic_demo'
+  | 'unavailable';
+
+export interface DataState {
+  provenance: Provenance;
+  fallback: boolean;
+  error?: string;
+}
+
+export interface DataSourceStatus {
+  slug: string;
+  name: string;
+  category: string;
+  provider: string;
+  access_type: string;
+  provenance: Provenance;
+  status: string;
+  license_name?: string | null;
+  attribution?: string | null;
+  credential_env?: string | null;
+  last_success_at?: string | null;
+  last_error?: string | null;
+  freshness_seconds?: number | null;
+  metadata: Record<string, unknown>;
+  credential_configured: boolean;
+  file_import_available: boolean;
+  provider_adapter_status: string;
+  accepted_formats: string[];
+  authorization_required: boolean;
+  operator_guidance?: string | null;
+}
+
+export interface IngestionRun {
+  id: number;
+  source_slug: string;
+  source_name: string;
+  status: 'running' | 'succeeded' | 'failed';
+  started_at: string;
+  finished_at?: string | null;
+  coverage_start?: string | null;
+  coverage_end?: string | null;
+  records_read: number;
+  records_written: number;
+  quality_flags: string[];
+  error?: string | null;
+  ingestion_method?: string | null;
+  original_filename?: string | null;
+  media_type?: string | null;
+  checksum?: string | null;
+}
+
+export interface SourceImportRequest {
+  sourceSlug: string;
+  file: File;
+  west: number;
+  south: number;
+  east: number;
+  north: number;
+  sourceVersion: string;
+  observedAt?: string;
+  authorizationReference: string;
+  licenseReference: string;
+  variable?: string;
+  unit?: string;
+  authorityToken?: string;
+}
+
+export interface SourceImportResult {
+  run_id: number;
+  status: string;
+  records_read: number;
+  records_written: number;
+  checksum?: string | null;
+  quality_flags: string[];
+}
 
 export interface RiskZone {
   zone_id: string;
@@ -22,6 +105,7 @@ export interface RiskZone {
     coordinates?: [number, number][]; // optional polygon bounds
   };
   last_updated: string;
+  provenance?: Provenance;
 }
 
 export interface DashboardSummary {
@@ -34,6 +118,24 @@ export interface DashboardSummary {
   high_risk_villages: number;
   blocked_roads_count: number;
   last_updated: string;
+  provenance?: Provenance;
+}
+
+export interface PlaceRiskResult {
+  query: string;
+  display_name: string;
+  latitude: number;
+  longitude: number;
+  matched_zone: RiskZone | null;
+  distance_km: number | null;
+  risk_score: number | null;
+  risk_level: RiskLevel | 'UNAVAILABLE';
+  confidence: number;
+  reasons: string[];
+  missing_features: string[];
+  weather_refresh?: SourceImportResult | null;
+  provenance: Provenance;
+  disclaimer: string;
 }
 
 export interface SimulationRequest {
@@ -64,6 +166,8 @@ export interface Alert {
   timestamp: string;
   acknowledged: boolean;
   evacuation_recommended: boolean;
+  status?: string;
+  public_dispatch?: 'disabled';
 }
 
 export interface Village {
@@ -114,4 +218,6 @@ export interface CitizenReport {
   urgency: 'LOW' | 'MEDIUM' | 'HIGH';
   timestamp: string;
   verified: boolean;
+  status?: 'pending' | 'verified' | 'rejected';
+  provenance?: Provenance;
 }
