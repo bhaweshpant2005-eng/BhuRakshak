@@ -27,6 +27,7 @@ import {
   mockVillages,
 } from './mockData';
 import { getRiskLevel } from '../utils/riskUtils';
+import { evaluatePlaceRisk } from './placeRiskEngine';
 
 function preparedCopy<T>(value: T): T {
   if (typeof structuredClone === 'function') return structuredClone(value);
@@ -155,8 +156,41 @@ export async function lookupPlaceRisk(
   refreshWeather = false,
 ): Promise<ApiResult<PlaceRiskResult>> {
   const query = new URLSearchParams({ address, refresh_weather: String(refreshWeather) });
-  return fetchApi<PlaceRiskResult>(`/api/v1/place-risk?${query}`);
+
+  // 1. Primary: FastAPI backend endpoint
+  try {
+    const backendResult = await fetchApi<PlaceRiskResult>(`/api/v1/place-risk?${query}`);
+    if (backendResult.ok && backendResult.data) {
+      return backendResult;
+    }
+  } catch (err) {
+    console.warn('[BhuRakshak] Backend place-risk API unreachable, falling back to Next.js route:', err);
+  }
+
+  // 2. Secondary: Internal Next.js API route (/api/place-risk)
+  try {
+    const nextResult = await fetchApi<PlaceRiskResult>(`/api/place-risk?${query}`);
+    if (nextResult.ok && nextResult.data) {
+      return nextResult;
+    }
+  } catch (err) {
+    console.warn('[BhuRakshak] Next.js route unreachable, using local engine fallback:', err);
+  }
+
+  // 3. Tertiary: Resilient local evaluation engine
+  try {
+    const calculated = await evaluatePlaceRisk(address, refreshWeather);
+    return { ok: true, data: calculated, status: 200 };
+  } catch (fallbackError) {
+    console.error('[BhuRakshak] Local place risk calculation failed:', fallbackError);
+    return {
+      ok: false,
+      error: fallbackError instanceof Error ? fallbackError.message : 'Unable to assess location risk.',
+      status: 500,
+    };
+  }
 }
+
 
 
 export async function getVillages(): Promise<Village[]> {
@@ -225,3 +259,4 @@ export async function runSimulation(req: SimulationRequest): Promise<SimulationR
     delta_score: projected - currentRisk,
   };
 }
+

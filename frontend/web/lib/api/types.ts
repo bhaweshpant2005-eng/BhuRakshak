@@ -134,6 +134,26 @@ export interface NearbyHistoricalLandslide extends HistoricalLandslide {
   distance_km: number;
 }
 
+export interface PlaceRiskWeatherData {
+  temperature_c: number;
+  rainfall_current_mm: number;
+  humidity_percent: number;
+  wind_speed_kmh: number;
+  weather_desc: string;
+  recorded_at?: string;
+}
+
+export interface PlaceRegionalContext {
+  sector: string;
+  state: string;
+  district: string;
+  elevation_approx_m?: number;
+  regional_hazard: string;
+  helpline_seoc: string;
+  helpline_ddma: string;
+  disaster_control_room: string;
+}
+
 export interface PlaceRiskResult {
   query: string;
   display_name: string;
@@ -151,6 +171,8 @@ export interface PlaceRiskResult {
   historical_landslides: PlaceRiskHistoricalContext;
   provenance: Provenance;
   disclaimer: string;
+  weather_data?: PlaceRiskWeatherData;
+  regional_context?: PlaceRegionalContext;
 }
 
 export interface SimulationRequest {
@@ -247,3 +269,4 @@ export interface CitizenReport {
   status?: 'pending' | 'verified' | 'rejected';
   provenance?: Provenance;
 }
+

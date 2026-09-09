@@ -11,6 +11,7 @@ downloads/
 eggs/
 .eggs/
 lib/
+!frontend/web/lib/
 lib64/
 parts/
 sdist/
@@ -61,3 +62,10 @@ tsconfig.tsbuildinfo
 
 # Object storage
 .object-storage/
+
+# Large model weights / checkpoints
+*.pth
+*.pt
+*.bin
+*.onnx
+model/*.pth
