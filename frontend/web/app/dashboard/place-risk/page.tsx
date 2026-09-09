@@ -278,22 +278,27 @@ export default function PlaceRiskPage() {
                   <span className={`inline-flex items-center gap-1.5 rounded-lg border px-3.5 py-1.5 text-xs font-extrabold ${levelStyles[result.risk_level]}`}>
                     {result.risk_level === 'CRITICAL' && <ShieldAlert className="size-4" />}
                     {result.risk_level === 'HIGH' && <AlertTriangle className="size-4" />}
+                    {result.risk_level === 'MODERATE' && <AlertTriangle className="size-4" />}
                     {result.risk_level === 'LOW' && <ShieldCheck className="size-4" />}
                     {result.risk_level === 'UNAVAILABLE' && <Info className="size-4 text-slate-500" />}
-                    {result.risk_level}
+                    {result.risk_level === 'LOW' ? 'LOW RISK (SAFE)' : `${result.risk_level} RISK`}
                   </span>
                 </div>
                 <div className="pb-1">
-                  <p className="text-xs font-semibold text-slate-500">Sensor Confidence</p>
+                  <p className="text-xs font-semibold text-slate-500">
+                    {result.matched_zone ? 'Sensor Confidence' : 'AI Model Confidence'}
+                  </p>
                   <p className="font-mono text-xl font-bold text-slate-800">{Math.round(result.confidence)}%</p>
                 </div>
               </div>
             </div>
 
-            {/* Nearest Monitored Zone Card */}
+            {/* Nearest Monitored Zone / AI Remote Sensing Card */}
             <div className="surface-card p-6 border border-slate-200 flex flex-col justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-sky-700">Nearest Telemetry Station</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-sky-700">
+                  {result.matched_zone ? 'Nearest Telemetry Station' : 'Evaluation Architecture'}
+                </p>
                 {result.matched_zone ? (
                   <div className="mt-3">
                     <h3 className="font-bold text-base text-slate-950">{result.matched_zone.name}</h3>
@@ -308,14 +313,23 @@ export default function PlaceRiskPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="mt-3">
-                    <h3 className="font-bold text-slate-900">Beyond Core NER Grid</h3>
-                    <p className="mt-2 text-xs text-slate-600 leading-relaxed">
-                      Nearest monitored station is <span className="font-bold text-slate-900">{result.distance_km ?? '>150'} km</span> away.
-                      Ground sensor telemetry is unavailable for automated scoring.
+                  <div className="mt-3 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-bold text-slate-950">AI Remote Sensing Model</h3>
+                      <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono text-[10px] font-bold">Active</span>
+                    </div>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Evaluated using Landslide4Sense U-Net terrain heuristics, Open-Meteo live microclimate, and GSI regional landslide susceptibility.
                     </p>
-                    <div className="mt-3 rounded-lg bg-amber-50 border border-amber-200 p-2.5 text-[11px] text-amber-800">
-                      Pilots are currently anchored in Northeast India (Sikkim, Meghalaya, Mizoram).
+                    <div className="mt-2.5 rounded-lg bg-slate-50 border border-slate-200 p-2.5 text-[11px] space-y-1">
+                      <div className="flex justify-between text-slate-600">
+                        <span>Terrain Model:</span>
+                        <span className="font-medium text-slate-900">{result.regional_context?.sector ?? 'Regional Basin'}</span>
+                      </div>
+                      <div className="flex justify-between text-slate-600">
+                        <span>Ground Station Distance:</span>
+                        <span className="font-mono font-semibold text-slate-800">{result.distance_km ?? '>150'} km</span>
+                      </div>
                     </div>
                   </div>
                 )}

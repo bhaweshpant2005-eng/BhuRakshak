@@ -141,6 +141,7 @@ export interface PlaceRiskWeatherData {
   wind_speed_kmh: number;
   weather_desc: string;
   recorded_at?: string;
+  elevation_m?: number;
 }
 
 export interface PlaceRegionalContext {
