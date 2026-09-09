@@ -270,3 +270,54 @@ export interface CitizenReport {
   provenance?: Provenance;
 }
 
+export interface LandslideDetectionHotspot {
+  id: string;
+  name: string;
+  bbox: [number, number, number, number];
+  centroid_geo: { lat: number; lng: number };
+  area_m2: number;
+  area_ha: number;
+  confidence: number;
+  severity: RiskLevel;
+  threatened_assets: string[];
+}
+
+export interface LandslideDetectionResult {
+  sector_id: string;
+  sector_name: string;
+  state: string;
+  district: string;
+  model_metadata: {
+    name: string;
+    architecture: string;
+    encoder: string;
+    channels: number;
+    best_epoch: number;
+    val_iou: number;
+    val_dice: number;
+    precision: number;
+    recall: number;
+    checkpoint_size_mb: number;
+    inference_device: string;
+    inference_time_ms: number;
+  };
+  input_dimensions: { width: number; height: number; channels: number };
+  active_bands: string[];
+  detection_threshold: number;
+  landslide_detected: boolean;
+  overall_confidence: number;
+  coverage_percent: number;
+  total_area_m2: number;
+  total_area_ha: number;
+  peak_probability: number;
+  risk_level: RiskLevel;
+  hotspots: LandslideDetectionHotspot[];
+  action_recommendations: string[];
+  telemetry: {
+    slope_deg: number;
+    rainfall_24h_mm: number;
+    soil_moisture_pct: number;
+    elevation_m: number;
+  };
+}
+

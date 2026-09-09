@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, MapPin, Search, SlidersHorizontal, Bell, BarChart2, Database, Globe } from 'lucide-react';
+import { LayoutDashboard, MapPin, Search, SlidersHorizontal, Bell, BarChart2, Database, Globe, Cpu } from 'lucide-react';
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
 
   const navItems = [
     { href: '/dashboard', label: 'Control Overview', icon: LayoutDashboard },
+    { href: '/dashboard/landslide-ai', label: 'Landslide AI (U-Net)', icon: Cpu, highlight: true },
     { href: '/dashboard/zones', label: 'Risk Zones & Map', icon: MapPin },
     { href: '/dashboard/place-risk', label: 'Check a Place', icon: Search },
     { href: '/dashboard/simulator', label: 'What-If Simulator', icon: SlidersHorizontal, highlight: true },

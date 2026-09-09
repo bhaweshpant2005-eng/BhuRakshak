@@ -14,6 +14,7 @@ import {
   SourceImportRequest,
   SourceImportResult,
   Village,
+  LandslideDetectionResult,
 } from './types';
 import {
   mockAlerts,
@@ -28,6 +29,7 @@ import {
 } from './mockData';
 import { getRiskLevel } from '../utils/riskUtils';
 import { evaluatePlaceRisk } from './placeRiskEngine';
+import { runLandslideAiDetection } from './landslideDetectionEngine';
 
 function preparedCopy<T>(value: T): T {
   if (typeof structuredClone === 'function') return structuredClone(value);
@@ -258,5 +260,18 @@ export async function runSimulation(req: SimulationRequest): Promise<SimulationR
     priority_actions: actions,
     delta_score: projected - currentRisk,
   };
+}
+
+export async function getLandslideAiDetection(
+  sector = 'sohra',
+  threshold = 0.5
+): Promise<LandslideDetectionResult> {
+  const result = await fetchApi<LandslideDetectionResult>(
+    `/api/landslide-detect?sector=${encodeURIComponent(sector)}&threshold=${threshold}`
+  );
+  if (result.ok) {
+    return result.data;
+  }
+  return runLandslideAiDetection(sector, threshold);
 }
 
