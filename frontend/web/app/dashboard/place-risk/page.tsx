@@ -241,20 +241,23 @@ export default function PlaceRiskPage() {
                   <p className="text-xs font-bold uppercase tracking-wider text-sky-700">Matched Location</p>
                   <h2 className="mt-1 text-xl font-black text-slate-950">{result.display_name}</h2>
                 </div>
-                <a
-                  href={`https://www.openstreetmap.org/?mlat=${result.latitude}&mlon=${result.longitude}#map=13/${result.latitude}/${result.longitude}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-sky-700 hover:underline"
-                >
-                  View on map <ExternalLink className="size-3" />
-                </a>
+                {typeof result.latitude === 'number' && typeof result.longitude === 'number' && (
+                  <a
+                    href={`https://www.openstreetmap.org/?mlat=${result.latitude}&mlon=${result.longitude}#map=13/${result.latitude}/${result.longitude}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-sky-700 hover:underline"
+                  >
+                    View on map <ExternalLink className="size-3" />
+                  </a>
+                )}
               </div>
 
               <div className="mt-2 flex items-center gap-3 font-mono text-xs text-slate-500">
                 <span className="inline-flex items-center gap-1">
                   <Compass className="size-3.5 text-slate-400" />
-                  {result.latitude.toFixed(5)}° N, {result.longitude.toFixed(5)}° E
+                  {typeof result.latitude === 'number' ? result.latitude.toFixed(5) : '—'}° N,{' '}
+                  {typeof result.longitude === 'number' ? result.longitude.toFixed(5) : '—'}° E
                 </span>
                 {result.regional_context?.elevation_approx_m && (
                   <span className="rounded bg-slate-100 px-2 py-0.5 text-[11px] text-slate-600 font-sans">

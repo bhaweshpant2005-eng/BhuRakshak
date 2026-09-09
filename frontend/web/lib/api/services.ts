@@ -162,7 +162,7 @@ export async function lookupPlaceRisk(
   // 1. Primary: FastAPI backend endpoint
   try {
     const backendResult = await fetchApi<PlaceRiskResult>(`/api/v1/place-risk?${query}`);
-    if (backendResult.ok && backendResult.data) {
+    if (backendResult.ok && backendResult.data && typeof backendResult.data.latitude === 'number') {
       return backendResult;
     }
   } catch (err) {
@@ -172,7 +172,7 @@ export async function lookupPlaceRisk(
   // 2. Secondary: Internal Next.js API route (/api/place-risk)
   try {
     const nextResult = await fetchApi<PlaceRiskResult>(`/api/place-risk?${query}`);
-    if (nextResult.ok && nextResult.data) {
+    if (nextResult.ok && nextResult.data && typeof nextResult.data.latitude === 'number') {
       return nextResult;
     }
   } catch (err) {

@@ -10,6 +10,7 @@ import {
   mockDataSources,
   mockIngestionRuns,
 } from '@/lib/api/mockData';
+import { evaluatePlaceRisk } from '@/lib/api/placeRiskEngine';
 
 const BACKEND_URL = (
   process.env.BACKEND_API_URL ||
@@ -127,6 +128,19 @@ export async function GET(
 
   if (joined.startsWith('sources/ingestion-runs')) {
     return NextResponse.json({ runs: mockIngestionRuns });
+  }
+
+  if (joined === 'place-risk') {
+    const address = request.nextUrl.searchParams.get('address')?.trim() || 'ranikhet';
+    const refreshWeather =
+      request.nextUrl.searchParams.get('refresh_weather') === 'true' ||
+      request.nextUrl.searchParams.get('refreshWeather') === 'true';
+    try {
+      const result = await evaluatePlaceRisk(address, refreshWeather);
+      return NextResponse.json(result);
+    } catch (err) {
+      console.error('[API /api/v1/place-risk fallback error]', err);
+    }
   }
 
   return NextResponse.json(
