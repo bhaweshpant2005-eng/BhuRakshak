@@ -8,14 +8,6 @@ const backendUrl = (
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['lucide-react', 'recharts'],
-  async rewrites() {
-    return [
-      {
-        source: '/api/v1/:path*',
-        destination: `${backendUrl}/api/v1/:path*`,
-      },
-    ];
-  },
 };
 
 export default nextConfig;
